@@ -38,7 +38,7 @@ There are six main players who have roles in the LWAYVE platform.
 - **Customer**: The company or individual that has purchased LWAYVE to implement Contextual Audio Experiences. LWAYVE is integrated into the Customer's mobile application in order to provide Listeners with Contextual Audio Experiences.
 - **Administrator**: The overall LWAYVE platform is managed by Lixar; however, Customers manage their own Contextual Audio Experiences and user roles. 
 
-###What are the Components of the LWAYVE Environment?
+### What are the Components of the LWAYVE Environment?
 The components to LWAYVE can be divided into the following main categories: Mobile SDKs, Customer Mobile Application, LWAYVE Service, and optionally, ProxSee Service.
 
 #### Mobile SDKs
