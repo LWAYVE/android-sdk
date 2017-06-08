@@ -24,7 +24,7 @@ The following document provides background information on the LWAYVE platform as
     * [Playback Controls](#playback-controls)
     * [Playlist Controls](#playlist-controls)
 
-## Section 1 - Introducing LWAVYE and Contextual Audio
+## Section 1: Introducing LWAVYE and Contextual Audio
 
 ### Background
 LWAYVE is an audio platform that provides event attendees with Contextual Audio Experiences and can be embedded to augment any mobile application. A Contextual Audio Experience serves as a personalized audio guide making any event as engaging, easy, and enjoyable as possible. 
