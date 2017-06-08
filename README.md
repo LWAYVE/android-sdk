@@ -9,7 +9,6 @@ The following document provides background information on the LWAYVE platform as
   - [Section 2: Implementing the LWAYVE SDK in an Android Project](#section-2-implementing-the-lwayve-sdk-in-an-android-project)
     * [Prerequisites](#prerequisites)
     * [Add the LWAYVE and ProxSee SDKs as Dependencies](#add-the-lwayve-and-proxsee-sdks-as-dependencies)
-    * [Generate/Locate Tokens](#generate-locate-tokens)
     * [Initialize the LWAYVE and ProxSee SDKs](#initialize-the-lwayve-and-proxsee-sdks)
     * [Enable Communication Between the LWAYVE and ProxSee SDKs](#enable-communication-between-the-lwayve-and-proxsee-sdks)
     * [Handle Audio](#handle-audio)
@@ -49,7 +48,7 @@ LWAYVE Contextual Audio Experiences are:
 
 There are six main players who have roles in the LWAYVE platform.  
 
-- **Developers**: Integrate the LWAYVE platform into the mobile application (see Setting Up and Running LWAYVE). By integrating LWAYVE, the app will contain a Play button which Listeners can tap to get a Contextual Audio Experience based on time, location, and user preferences. 
+- **Developers**: Integrate the LWAYVE platform into the mobile application. By integrating LWAYVE, the app will contain a Play button which Listeners can tap to get a Contextual Audio Experience based on time, location, and user preferences. 
 - **Experience Designer**: Choreographs the Contextual Audio Experience and sources the content. An Experience Designer essentially builds a Conextual Audio Experience based on an event (e.g., music festival). The Contextual Audio Experience contains audio that will be passed to the Listener based on their location, user preferences, and time. For example, an Experience Designer for a music festival may choose to have Listeners hear traffic information on their way to the event and stage schedules while at the event.  
 - **Listener**: The end-user that enjoys a high-value, personalized Contextual Audio Experience based on their location, user preferences, and time. The Listener hears their Contextual Audio Experience by tapping a Play button on the mobile application.
 - **Experience Conductor**: An Experience Conductor is the eyes and ears on the ground at an event. Experience Conductors control the situational audio in a Contextual Audio Experience and make adjustments based on real-time information. For example, at a music festival, if the concert that was originally scheduled for 9:00pm has been moved to 10:00pm, the Experience Conductor can adjust the Contextual Audio Experience accordingly. 
@@ -69,7 +68,7 @@ As part of their role, Developers integrate the following two SDKS into the mobi
 
 #### Experience Service and Contextual Audio Experience 
 - **Experience Service**: This is the backend platform on which the Experience Designer creates a Contextual Audio Experience. 
-- **Contextual Audio Experience**: This is the content created on the Experience Service. The Contextual Audio Experience is passed to the LWAYVE SDK based on the auth token and customer ID specified when setting up the LWAYVE SDK.
+- **Contextual Audio Experience**: This is the content created on the Experience Service.
   - **Curated Audio**: This is the audio that has been gathered by the Experience Designer during the initial planning and design stages. This audio is planned around a Listener's user preferences, time, and location. For example, for a music festival, the Experience Designer might create curated audio based on the performance schedule.   
   - **Situational Audio**: This is audio that is gathered by the Experience Conductor "on the ground" at the event. For example, at a music festival, sudden unpredicted weather changes may cause the Experience Conductor to create situational audio for safety precautions due to inclement weather (e.g., advising Listeners to take shelter).  
   - **User Preferences**: These are settings set by the Listener in the Customer mobile application. 
@@ -83,17 +82,17 @@ The following image depicts the high-level LWAYVE Contextual Audio Experience wo
 
 
 ## Section 2: Implementing the LWAYVE SDK in an Android Project
-Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple five-step process:
+Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple four-step process:
 1. Add the LWAYVE and ProxSee SDKs as Dependencies
-2. Generate/Locate Tokens
-3. Initialize the LWAYVE and ProxSee SDKs
-4. Enable Communication Between the LWAYVE and ProxSee SDKs
-5. Handle Audio
+2. Initialize the LWAYVE and ProxSee SDKs
+3. Enable Communication Between the LWAYVE and ProxSee SDKs
+4. Handle Audio
 
 ### Prerequisites
-The instructions have been provided below with the assumptions:
+The instructions have been provided below with the following assumptions:
 - A Customer-specific environment has been provisioned
 - An Authorization token has been provided
+- A ProxSee API key has been provided
 - An Experience Designer has already created a Contextual Audio Experience and uploaded it for your environment. Alternatively, a Sample Lixar Experience has been loaded into your environment.
 - The corresponding audio files for the Contextual Audio Experience have been uploaded to the environment
 - If ProxSee services are being used, Location tags needed for the LWAYVE Contextual Audio Experience have been defined within the ProxSee environment.
@@ -132,24 +131,6 @@ compile 'io.proxsee.sdk:proxsee-sdk:{sdkVersion}'
 
 ```
 
-### Generate/Locate Tokens
-To ensure proper authentication and communication, provide your authentication token and customer ID as well generate a ProxSee API Key, as well as provide your Customer ID. 
-
-#### Locate Your LWAYVE Authentication Token and Customer ID
-Your LWAYVE Authentication token and Customer ID should have been provided to you by your LWAYVE Admin. Take a minute to locate these tokens now as you will require to enter them in the following steps.
-
-An LWAYVE Contextual Audio Experience is linked to your Customer ID. By entering a valid Customer ID, along with an LWAYVE Authentication token, you are ensuring that the correct Contextual Audio Experience is being passed to the Listener. 
-
-#### Generate a ProxSee API Key
-You can generate a ProxSee API key using the ProxSee Admin Portal. For more information, refer to [https://github.com/proxsee/sdk-android](https://github.com/proxsee/sdk-android) .
-
-1. Log in to the ProxSee Admin Portal.
-2. Select **Application**.
-3. Select **Create Application**.
-4. From the API Type field, select **Mobile**.
-5. Copy the generated GUID. This is your ProxSee API Key.
-
-
 ### Initialize the LWAYVE and ProxSee SDKs
 The next step is to initialize (launch) both the LWAYVE SDK and the ProxSee SDK. 
 
@@ -158,8 +139,7 @@ Add the following code to your mobile application's initialization process (e.g.
 
 **Parameters**
 
-- {lwayveAuthToken} - The authentication token for LWAYVE. For instructions, see Generate an LWAYVE Auth Token.
-- {lwayveCustomerId} - Your customer identification on the LWAYVE backend. 
+- {lwayveAuthToken} - The authentication token for LWAYVE provided by Lixar. 
 
 **Code**
 
@@ -184,7 +164,7 @@ Add the following code to your mobile application's initialization process (e.g.
 
 **Parameters**
 
-[proxseeApikey} - The API key created through the ProxSee Admin Portal. For instructions, see Generate a ProxSee API Key.
+[proxseeApikey} - The API key provided by Lixar.
 
 **Code**
 
