@@ -49,5 +49,5 @@ dependencies {
     /**
      * modules
      */
-    compile 'com.lixar.lwayve:lwayve-sdk:1.0.0'
+    compile 'com.lixar.lwayve:lwayve-sdk:1.0.1'
 }
