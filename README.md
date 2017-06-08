@@ -2,7 +2,7 @@
 The following document provides background information on the LWAYVE platform as well as provides setup and usage instructions for the LWAYVE SDK for Android. The content in this document is divided into the following sections:
 
 - Section 1: Introducing LWAYVE and Contextual Audio
-- Section 2: Installing and Setting Up LWAYVE
+- Section 2: Implementing the LWAYVE SDK in an Android Project
 - Section 3: Testing LWAYVE
 - Section 4: Using LWAYVE Methods
 
@@ -64,9 +64,9 @@ The following image depicts the high-level LWAYVE Contextual Audio Experience wo
 ![Communication Diagram](https://lh5.googleusercontent.com/KHZxmHIvWV1YlFJQUnKQlChGoLBYVeDLnrvbISs1jIDID40APmEApwPNh4zQZ8BMeGgf4SxplgcJ7J0=w1920-h950)
 
 
-## Section 2: Installing and Setting Up LWAYVE 
-Installing the LWAYVE and ProxSee SDKs for Android is a simple five-step process:
-1. Install the LWAYVE and ProxSee SDKs
+## Section 2: Implementing the LWAYVE SDK in an Android Project
+Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple five-step process:
+1. Add the LWAYVE and ProxSee SDKs as Dependencies
 2. Generate/Locate Tokens
 3. Initialize the LWAYVE and ProxSee SDKs
 4. Enable Communication Between the LWAYVE and ProxSee SDKs
@@ -81,11 +81,11 @@ The instructions have been provided below with the assumptions:
 - If ProxSee services are being used, Location tags needed for the LWAYVE Contextual Audio Experience have been defined within the ProxSee environment.
  
 
-### Install the LWAYVE and ProxSee SDKs
-The first step in setting up LWAYVE is to install both the LWAYVE SDK and the ProxSee SDK. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
+### Add the LWAYVE and ProxSee SDKs as Dependencies
+The first step in setting up LWAYVE is to add both the LWAYVE SDK and the ProxSee SDK as dependencies in your project's build.gradle file. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
 
-#### Install the LWAYVE SDK
-To install the LWAYVE SDK, add the following line of code to the **dependencies** section of your **build.gradle**:
+#### Add the LWAYVE SDK as a Dependency
+To include the LWAYVE SDK in your project, add the following line of code to the **dependencies** section of your **build.gradle**:
 
 **Parameters**
 
@@ -99,8 +99,8 @@ compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
 
 ```
 
-#### Install the ProxSee SDK
-To install the the ProxSee SDK, add the following line of code to the **dependencies** section of your **build.gradle**.
+#### Add the ProxSee SDK as a Dependency
+To include the ProxSee SDK as a dependency in your project, add the following line of code to the **dependencies** section of your **build.gradle**.
 
 **Parameters**
 
@@ -179,7 +179,7 @@ ProxSeeSDKManager.getInstance().start();
 
 
 ### Enable Communication Between the LWAYVE and ProxSee SDKs
-Now that the LWAYVE SDK and ProxSee SDK have been installed and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
+Now that the LWAYVE SDK and ProxSee SDK have been added to your project and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
 
 #### Send LWAYVE Device ID to ProxSee SDK
 Add the following code to your mobile application.
@@ -493,7 +493,6 @@ private void setTimeForLwayveSdk(LocalDateTime time) {
 }
 
 ```
-
 ## Section 4: Using LWAYVE Methods
 Several methods have been made available to allow you to interact with LWAYVE. The methods available are divided into the following categories:
 
@@ -511,6 +510,9 @@ The following actions can be peformed:
 - Update Configuration Settings
 - Get LWAYVE SDK Instance
 - Get Debug Info
+
+
+
 
 
 #### Initialize the LWAYVE SDK
@@ -1084,7 +1086,7 @@ connectToMediaBrowser(Activity activity, MediaBrowserCompat.ConnectionCallback c
 
 #### Disconnect from MediaBrowser
 
-Disconnect from the MediaBrowser. This method should be used when your Activity goes out of the foreground. 
+Disconnect from the MediaBrowser. This method should be used when your activity goes out of the foreground. 
 
 **Parameters**
 
