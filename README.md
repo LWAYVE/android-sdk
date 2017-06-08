@@ -79,7 +79,7 @@ As part of their role, Developers integrate the following two SDKS into the mobi
 ### How Does LWAYVE Work?
 The following image depicts the high-level LWAYVE Contextual Audio Experience workflow:
 
-![Communication Diagram](https://lh5.googleusercontent.com/KHZxmHIvWV1YlFJQUnKQlChGoLBYVeDLnrvbISs1jIDID40APmEApwPNh4zQZ8BMeGgf4SxplgcJ7J0=w1920-h950)
+![Communication Diagram](https://drive.google.com/uc?export=download&id=0B6FLg-DILCSrUm1ocFVGVnlMc0k)
 
 
 ## Section 2: Implementing the LWAYVE SDK in an Android Project
