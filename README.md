@@ -106,7 +106,7 @@ To include the LWAYVE SDK in your project, add the following line of code to the
 
 **Parameters**
 
-- {sdkVersion} - The latest version of LWAYVE, which can be found at [http://mvnrepository.com/artifact/com.lixar.lwayve/lwayve-sdk](http://mvnrepository.com/artifact/com.lixar.lwayve/lwayve-sdk)
+- {sdkVersion} - The latest version of LWAYVE, which can be found at [http://search.maven.org/#search|ga|1|lwayve-sdk](http://search.maven.org/#search|ga|1|lwayve-sdk)
 
 **Code**
 
@@ -121,7 +121,7 @@ To include the ProxSee SDK as a dependency in your project, add the following li
 
 **Parameters**
 
-- {sdkVersion} - The latest version of ProxSee, which can be found at [http://mvnrepository.com/artifact/io.proxsee/proxsee-sdk](http://mvnrepository.com/artifact/io.proxsee/proxsee-sdk)
+- {sdkVersion} - The latest version of ProxSee, which can be found at [http://search.maven.org/#search|ga|1|proxsee-sdk](http://search.maven.org/#search|ga|1|proxsee-sdk)
 
 **Code**
 
