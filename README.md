@@ -146,7 +146,6 @@ Add the following code to your mobile application's initialization process (e.g.
 ```
 LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
                 .setAuthenticationToken({lwayveAuthToken})
-                .setCustomerId(Long.parseLong({lwayveCustomerId})
                 .build();
  
 try {
