@@ -3,9 +3,9 @@ The following document provides background information on the LWAYVE platform as
 
   - [Section 1: Introducing LWAVYE and Contextual Audio](#section-1-introducing-lwavye-and-contextual-audio)
     * [Background](#background)
-    * [Who are the Players?](#who-are-the-players-)
-    * [What are the Components of the LWAYVE Environment?](#what-are-the-components-of-the-lwayve-environment-)
-    * [How Does LWAYVE Work?](#how-does-lwayve-work-)
+    * [Who are the Players?](#who-are-the-players)
+    * [What are the Components of the LWAYVE Environment?](#what-are-the-components-of-the-lwayve-environment)
+    * [How Does LWAYVE Work?](#how-does-lwayve-work)
   - [Section 2: Implementing the LWAYVE SDK in an Android Project](#section-2-implementing-the-lwayve-sdk-in-an-android-project)
     * [Prerequisites](#prerequisites)
     * [Add the LWAYVE and ProxSee SDKs as Dependencies](#add-the-lwayve-and-proxsee-sdks-as-dependencies)
