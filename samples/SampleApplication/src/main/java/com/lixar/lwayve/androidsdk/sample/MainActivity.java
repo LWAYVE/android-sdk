@@ -132,17 +132,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.tags)
-    public void tags() {
+    @OnClick(R.id.likes)
+    public void likes() {
         if (lwayveSdk != null) {
-            Set<String> tags = new LinkedHashSet<>();
-            tags.add("#Drinks");
-            tags.add("#Danica");
-            tags.add("#Johnson-Jimmie");
-            tags.add("#Car43");
-            tags.add("#Car45");
-            tags.add("#Car50");
-            lwayveSdk.addTags(tags);
+            Set<String> likes = new LinkedHashSet<>();
+            likes.add("#Drinks");
+            likes.add("#Danica");
+            likes.add("#Johnson-Jimmie");
+            likes.add("#Car43");
+            likes.add("#Car45");
+            likes.add("#Car50");
+            lwayveSdk.addUserLikes(likes);
         }
     }
 

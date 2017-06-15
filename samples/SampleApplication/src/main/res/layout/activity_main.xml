@@ -79,10 +79,10 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/tags"
+            android:id="@+id/likes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tags_btn" />
+            android:text="@string/likes_btn" />
 
         <Button
             android:id="@+id/locations"

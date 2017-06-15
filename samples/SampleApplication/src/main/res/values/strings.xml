@@ -5,8 +5,8 @@
     <string name="stop_btn">Stop</string>
     <string name="rewind_btn">Rewind</string>
     <string name="skip_btn">Skip</string>
-    <string name="tags_btn">Tags</string>
-    <string name="locations_btn">Locations</string>
+    <string name="likes_btn">Add Likes</string>
+    <string name="locations_btn">Add Locations</string>
     <string name="title_activity_settings">Settings</string>
 
     <string name="settings_menu_title">Settings</string>
