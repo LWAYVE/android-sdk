@@ -466,14 +466,14 @@ removeLocations(Set<String> locations);
 
 ```
 
-### Setting User Preferences
-You can set user preferences in LWAYVE using the following code:
+### Setting User Likes
+You can set user likes in LWAYVE using the following code:
 
 ```
-addTag(String tag);
-addTags(Set<String> tags);
-removeTag(String tag);
-removeTags(Set<String> tags);
+addUserLike(String like);
+addUserLikes(Set<String> likes);
+removeUserLike(String like);
+removeUserLikes(Set<String> likes);
 
 ```
 
@@ -613,10 +613,10 @@ The following actions can be performed:
 - Add Locations
 - Remove Location
 - Remove Locations
-- Add Tag
-- Add Tags
-- Remove Tag
-- Remove Tags
+- Add User Like
+- Add User Likes
+- Remove User Like
+- Remove User Likes
 - Offset Time
 
 
@@ -663,69 +663,69 @@ Remove the specified set of locations from the LWAYVE SDK.
  
 **Parameters**
 
-tags: The set of location names to remove from the LWAYVE SDK.
+locations: The set of location names to remove from the LWAYVE SDK.
  
 **Code**
 ```
 removeLocations(Set<String> locations): void
 ``` 
 
-#### Add Tag
-Add a tag to the LWAYVE SDK.
+#### Add User Like
+Add a user like to the LWAYVE SDK.
 
 **Parameters**
 
-tag: The name of the tag to add.
+like: The name of the like to add.
 
 **Code** 
 
 ```
-addTag(String tag): void
+addUserLike(String like): void
 
 ```
  
-#### Add Tags
+#### Add UserLikes
  
-Add a set of tag names to the LWAYVE SDK.
+Add a set of user likes to the LWAYVE SDK.
 
  
 **Parameters**
 
-tags: The set of tags to add.
+likes: The set of likes to add.
 
  **Code**
 
 ```
-addTags(Set<String> tags): void
+addUserLikes(Set<String> likes): void
 
 ``` 
 
  
-#### Remove Tag
-Remove the specified tag from the LWAYVE SDK.
+#### Remove User Like
+Remove the specified user like from the LWAYVE SDK.
  
 **Parameters**
-tag: The tag to remove.
+like: The like to remove.
 
  **Code**
 
 ```
-removeTag(String tag): void
+removeUserLike(String like): void
 ``` 
 
  
-#### Remove Tags
+#### Remove User Likes
 
  
-Remove the specified set of tags from the LWAYVE SDK.
+Remove the specified set of user likes from the LWAYVE SDK.
  
 **Parameters**
 
-tags: The set of tag names to remove from the LWAYVE SDK.
+likes: The set of likes to remove from the LWAYVE SDK.
 
 **Code**
 ```
-removeTags(Set<String> tags): void
+removeUserLikes(Set<String> likes): void
 ```
 
 #### Offset Time
@@ -863,7 +863,7 @@ The following actions can be performed:
 
 #### Get Current Playlist
  
-Returns the current LWAYVE playlist based on the current experience and location, time and tag parameters passed to the LWAYVE SDK.
+Returns the current LWAYVE playlist based on the current experience and location, time and like parameters passed to the LWAYVE SDK.
  
 **Parameters**
 
