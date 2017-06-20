@@ -1,7 +1,7 @@
 # LWAYVE SDK for Android
 The following document provides background information on the LWAYVE platform as well as provides setup and usage instructions for the LWAYVE SDK for Android. The content in this document is divided into the following sections:
 
-  - [Section 1: Introducing LWAVYE and Contextual Audio](#section-1-introducing-lwavye-and-contextual-audio)
+  - [Section 1: Introducing LWAYVE and Contextual Audio](#section-1-introducing-lwayve-and-contextual-audio)
     * [Background](#background)
     * [Who are the Players?](#who-are-the-players)
     * [What are the Components of the LWAYVE Environment?](#what-are-the-components-of-the-lwayve-environment)
@@ -23,7 +23,7 @@ The following document provides background information on the LWAYVE platform as
     * [Playback Controls](#playback-controls)
     * [Playlist Controls](#playlist-controls)
 
-## Section 1: Introducing LWAVYE and Contextual Audio
+## Section 1: Introducing LWAYVE and Contextual Audio
 
 ### Background
 LWAYVE is an audio platform that provides event attendees with Contextual Audio Experiences and can be embedded to augment any mobile application. A Contextual Audio Experience serves as a personalized audio guide making any event as engaging, easy, and enjoyable as possible. 
