@@ -15,7 +15,7 @@ The following document provides background information on the LWAYVE platform as
   - [Section 3: Testing LWAYVE](#section-3-testing-lwayve)
     * [Using API](#using-api)
     * [Setting Location](#setting-location)
-    * [Setting User Preferences](#setting-user-preferences)
+    * [Setting User Likes](#setting-user-likes)
     * [Setting Time](#setting-time)
   - [Section 4: Using LWAYVE Methods](#section-4-using-lwayve-methods)
     * [SDK Controls](#sdk-controls)
@@ -37,7 +37,7 @@ Contextual Audio delivers optimal audio to a Listener based on their current con
 
 LWAYVE Contextual Audio Experiences are:
 
-- **Contextual**. The audio in a Contextual Audio Experience will be different for each user at the event based on their user preferences, location, time, and situation.
+- **Contextual**. The audio in a Contextual Audio Experience will be different for each user at the event based on their user likes, location, time, and situation.
 - **Choreographed.** Contextual Audio Experiences are carefully choreographed and curated to ensure the highest quality audio experience for the event.
 - **Integrated**. The LWAYVE platform can be integrated into any mobile application on the most popular mobile devices and requires minimal interaction on the part of the Listener.
 - **Measured**. The usage data collected with LWAYVE allows Customers to measure the impact of the audio advertising on a Listener's actions and then optimize the Contextual Audio Experience accordingly.
@@ -48,9 +48,9 @@ LWAYVE Contextual Audio Experiences are:
 
 There are six main players who have roles in the LWAYVE platform.  
 
-- **Developers**: Integrate the LWAYVE platform into the mobile application. By integrating LWAYVE, the app will contain a Play button which Listeners can tap to get a Contextual Audio Experience based on time, location, and user preferences. 
-- **Experience Designer**: Choreographs the Contextual Audio Experience and sources the content. An Experience Designer essentially builds a Conextual Audio Experience based on an event (e.g., music festival). The Contextual Audio Experience contains audio that will be passed to the Listener based on their location, user preferences, and time. For example, an Experience Designer for a music festival may choose to have Listeners hear traffic information on their way to the event and stage schedules while at the event.  
-- **Listener**: The end-user that enjoys a high-value, personalized Contextual Audio Experience based on their location, user preferences, and time. The Listener hears their Contextual Audio Experience by tapping a Play button on the mobile application.
+- **Developers**: Integrate the LWAYVE platform into the mobile application. By integrating LWAYVE, the app will contain a Play button which Listeners can tap to get a Contextual Audio Experience based on time, location, and user likes. 
+- **Experience Designer**: Choreographs the Contextual Audio Experience and sources the content. An Experience Designer essentially builds a Conextual Audio Experience based on an event (e.g., music festival). The Contextual Audio Experience contains audio that will be passed to the Listener based on their location, user likes, and time. For example, an Experience Designer for a music festival may choose to have Listeners hear traffic information on their way to the event and stage schedules while at the event.  
+- **Listener**: The end-user that enjoys a high-value, personalized Contextual Audio Experience based on their location, user likes, and time. The Listener hears their Contextual Audio Experience by tapping a Play button on the mobile application.
 - **Experience Conductor**: An Experience Conductor is the eyes and ears on the ground at an event. Experience Conductors control the situational audio in a Contextual Audio Experience and make adjustments based on real-time information. For example, at a music festival, if the concert that was originally scheduled for 9:00pm has been moved to 10:00pm, the Experience Conductor can adjust the Contextual Audio Experience accordingly. 
 - **Customer**: The company or individual that has purchased LWAYVE to implement Contextual Audio Experiences. LWAYVE is integrated into the Customer's mobile application in order to provide Listeners with Contextual Audio Experiences.
 - **Administrator**: The overall LWAYVE platform is managed by Lixar; however, Customers manage their own Contextual Audio Experiences and user roles. 
@@ -69,9 +69,9 @@ As part of their role, Developers integrate the following two SDKS into the mobi
 #### Experience Service and Contextual Audio Experience 
 - **Experience Service**: This is the backend platform on which the Experience Designer creates a Contextual Audio Experience. 
 - **Contextual Audio Experience**: This is the content created on the Experience Service.
-  - **Curated Audio**: This is the audio that has been gathered by the Experience Designer during the initial planning and design stages. This audio is planned around a Listener's user preferences, time, and location. For example, for a music festival, the Experience Designer might create curated audio based on the performance schedule.   
+  - **Curated Audio**: This is the audio that has been gathered by the Experience Designer during the initial planning and design stages. This audio is planned around a Listener's user likes, time, and location. For example, for a music festival, the Experience Designer might create curated audio based on the performance schedule.   
   - **Situational Audio**: This is audio that is gathered by the Experience Conductor "on the ground" at the event. For example, at a music festival, sudden unpredicted weather changes may cause the Experience Conductor to create situational audio for safety precautions due to inclement weather (e.g., advising Listeners to take shelter).  
-  - **User Preferences**: These are settings set by the Listener in the Customer mobile application. 
+  - **User Likes**: These are settings set by the Listener in the Customer mobile application. 
   - **Time**: The Contextual Audio Experience will provide the Listener with different content depending on the time. For example, at a music festival, at 4:00pm when the gates open, the audio may be related to entrance lineups and at 8:00pm the audio may be related to the concert schedule.
   - **Location**: The Contextual Audio Experience will differ depending on the location of the Listener. For example, if the Listener is standing next to the food tent, the audio may be related to menu items and meal specials.
 
