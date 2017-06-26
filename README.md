@@ -178,9 +178,11 @@ ProxSeeSDKManager.getInstance().start();
 There are two options for setting up communication:
 - Option 1: Prebuilt Implementation
 - Option 2: Manual Implementation
- 
+
+Using the prebuilt control allows for quick and easy integration, however, note that using this option does not allow for much customization. While the manual implementation may be more difficult than the prebuilt implementation outlined in Option 1, the manual implementation allows for more freedom in the look and feel of the UI elements. 
+
 #### Option 1: Prebuilt Implementation
- 
+
 Add the control to your Activity's xml layout file:
  
 Example
@@ -235,7 +237,7 @@ public class MainActivity extends Activity {
  
 ```
 #### Option 2: Manual Implementation
- 
+
 There are two main steps in the manual implementation:
 - Enable Communication Between the LWAYVE and ProxSee SDKs
 - Handle Audio
