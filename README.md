@@ -234,11 +234,11 @@ public class MainActivity extends Activity {
 }
  
 ```
-####Option 2: Manual Implementation
+#### Option 2: Manual Implementation
  
 There are two main steps in the manual implementation:
-Enable Communication Between the LWAYVE and ProxSee SDKs
-Handle Audio
+- Enable Communication Between the LWAYVE and ProxSee SDKs
+- Handle Audio
  
 ##### Enable Communication Between the LWAYVE and ProxSee SDKs
 Now that the LWAYVE SDK and ProxSee SDK have been added to your project and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
@@ -246,11 +246,6 @@ Now that the LWAYVE SDK and ProxSee SDK have been added to your project and init
 ###### Send LWAYVE Device ID to ProxSee SDK
 Add the following code to your mobile application.
  
-**Parameters**
- 
-There are no input parameters.
- 
-**Code**
  
 ```
  
@@ -272,12 +267,6 @@ private void setProxSeeMetadata() {
  
 ###### Send ProxSee Locations to LWAYVE SDK
 Add the following code to your mobile application.
- 
-**Parameters**
- 
-There are no input parameters.
- 
-**Code**
  
 ```
  
@@ -556,74 +545,74 @@ private void setTimeForLwayveSdk(LocalDateTime time) {
  
 ```
  
-
 ## Section 4: Using LWAYVE Methods
 Several methods have been made available to allow you to interact with LWAYVE. The methods available are divided into the following categories:
  
--Class Summary 
-- LwayveSdk 
-- SDK Controls
-- Context Controls
-- Playlist Controls
-- Playback Controls
-- LwayvePlaybackControlView
+- Class Summary 
+	- LwayveSdk 
+		- SDK Controls
+		- Context Controls
+		- Playlist Controls
+		- Playback Controls
+	- LwayvePlaybackControlView
 - Interface Summary
-- OnPlaybackEventListener
+	- OnPlaybackEventListener
 - Enum Summary
-- PlaybackEventType
+	- PlaybackEventType
  
  
 ### Class Summary
  
 The following two classes are available:
  
-LwayveSdk 
-LwayvePlaybackControlView
+- LwayveSdk 
+- LwayvePlaybackControlView
  
 #### LwayveSdk 
  
 The LwayveSdk class contains the following public methods:
  
 -SDK Controls
-- Initialize the LWAYVE SDK
-- Deinitialize the LWAYVE SDK
-- Get Current Configuration Settings
-- Update Configuration Settings
-- Get LWAYVE SDK Instance
-- Get Debug Info
+	- Initialize the LWAYVE SDK
+	- Deinitialize the LWAYVE SDK
+	- Get Current Configuration Settings
+	- Update Configuration Settings
+	- Get LWAYVE SDK Instance
+	- Get Debug Info
 - Context Controls
-- Add Location
-- Add Locations
-- Remove Location
-- Remove Locations
-- Add Tag
-- Add Tags
-- Remove Tag
-- Remove Tags
-- Offset Time
+	- Add Location
+	- Add Locations
+	- Remove Location
+	- Remove Locations
+	- Add Tag
+	- Add Tags
+	- Remove Tag
+	- Remove Tags
+	- Offset Time
 - Playback Controls 
-- Play
-- Pause
-- Stop
-- Skip to Next
-- Skip to Previous
-- Playback Status
+	- Play
+	- Pause
+	- Stop
+	- Skip to Next
+	- Skip to Previous
+	- Playback Status
 - Playlist Controls
-- Get Current Playlist
-- Get Current Playback Position
-- Get List of Items in Current Playing Queue
-- Get Number of Unplayed Items in Current Playing Queue
-- Get Play Status
-- Get Duration of Current Queued Audio Clip
-- Get Latest Experience 
-- Get Unique Device ID
-- Flush Analytics Data
-- Get Experience Object
-- Allow Access to Metadata
-- Refresh Playlist
-- Clear Played Items
-- Connect to MediaBrowser
-- Disconnect from Media
+	- Get Current Playlist
+	- Get Current Playback Position
+	- Get List of Items in Current Playing Queue
+	- Get Number of Unplayed Items in Current Playing Queue
+	- Get Play Status
+	- Get Duration of Current Queued Audio Clip
+	- Get Latest Experience 
+	- Get Unique Device ID
+	- Flush Analytics Data
+	- Get Experience Object
+	- Allow Access to Metadata
+	- Refresh Playlist
+	- Clear Played Items
+	- Connect to MediaBrowser
+	- Disconnect from Media
+
 ##### Initialize the LWAYVE SDK
  
 ```
@@ -633,15 +622,10 @@ void init(Context context, LwayveSdkConfiguration configuration)
 Initializes the Lwayve SDK. You must call this method and initialize the SDK before you can start using LWAYVE.
  
 **Parameters**
-**context** An Android Context
-**configuration**: An instance of LwayveSdkConfiguration
- 
- 
- 
- 
+- context" An Android Context
+- configuration: An instance of LwayveSdkConfiguration
  
 ##### Deinitialize the LWAYVE SDK
- 
  
 ```
 void deinit()
@@ -649,14 +633,7 @@ void deinit()
 ```
 Deinitializes the LWAYVE SDK and frees it from memory.
  
- 
- 
- 
- 
- 
 ##### Get Current Configuration Settings
- 
- 
  
 ```
 LwayveSdkConfiguration getConfiguration() throws InvalidSdkConfigurationException
@@ -664,15 +641,7 @@ LwayveSdkConfiguration getConfiguration() throws InvalidSdkConfigurationExceptio
 ```
 Returns the current configuration settings for the LWAYVE SDK once it has been initialized. If the Authentication token is missing or invalid, the ```InvalidSdkConfigurationException``` will be thrown.
  
- 
 ##### Update Configuration Settings
- 
- 
- 
- 
- 
- 
- 
  
 ```
 void updateConfiguration(Context context, LwayveSdkConfiguration configuration)
@@ -681,14 +650,10 @@ void updateConfiguration(Context context, LwayveSdkConfiguration configuration)
 Updates configuration values used by the LWAYVE SDK
  
 **Parameters**:
-**context**: An Android Context
-**configuration**: An instance of LwayveSdkConfiguration
- 
+- context: An Android Context
+- configuration: An instance of LwayveSdkConfiguration
  
 ##### Get the LWAYVE SDK Instance
- 
- 
- 
  
 ```
 void getInstance() throws SdkNotInitializedException
@@ -699,26 +664,13 @@ Gets the LWAYVE SDK instance. ```init()``` must already have been called or this
  
 ##### Get Debug Info
  
- 
- 
- 
 ```
 String generateDebugInfo()
  
 ```
 Returns debug info about the state of the LWAYVE SDK.
  
- 
- 
- 
- 
- 
- 
- 
 ##### Add Location
- 
- 
- 
  
 ```
 void addLocation(String location)
@@ -726,11 +678,9 @@ void addLocation(String location)
 Add a location to the LWAYVE SDK.
  
 **Parameters**:
-- **location**: The name of the location to add.
- 
+- location: The name of the location to add.
  
 ##### Add Locations
- 
  
 ```
 void addLocations(Set<String> locations)
@@ -738,11 +688,9 @@ void addLocations(Set<String> locations)
 Add a set of locations to the LWAYVE SDK.
  
 **Parameters**: 
-	-**locations**: The set of location names to add.
- 
+- locations: The set of location names to add.
  
 ##### Remove Location
- 
  
 ```
 void removeLocation(String location)
@@ -750,11 +698,9 @@ void removeLocation(String location)
 Remove the specified location from the LWAYVE SDK.
  
 **Parameters**: 
-	-**location**: The location to remove.
- 
+- location: The location to remove.
  
 ##### Remove Locations
- 
  
 ```
 void removeLocations(Set<String> locations)
@@ -762,12 +708,9 @@ void removeLocations(Set<String> locations)
 Remove the specified set of locations from the LWAYVE SDK.
  
 **Parameters**:
-	-**tags**: The set of location names to remove from the LWAYVE SDK.
+- tags: The set of location names to remove from the LWAYVE SDK.
  
 ##### Add Tag
- 
- 
- 
  
 ```
 void addTag(String tag)
@@ -776,35 +719,22 @@ void addTag(String tag)
 Add a tag to the LWAYVE SDK.
  
 **Parameters**: 
-	
+- tags: The set of tags to add.
  
  
 ##### Add Tags
- 
- 
- 
- 
-**Parameters**
- 
-tags: The set of tags to add.
- 
- **Code**
- 
+
 ```
 void addTags(Set<String> tags)
  
 ``` 
 Add a set of tag names to the LWAYVE SDK.
- 
+
 **Parameters**
--**tag**: The name of the tag to add.
  
- 
+- tags: The set of tags to add.
  
 ##### Remove Tag
- 
- 
- 
  
 ```
 void removeTag(String tag)
@@ -812,13 +742,10 @@ void removeTag(String tag)
 Remove the specified tag from the LWAYVE SDK.
  
 **Parameters**
-**tag**: The tag to remove.
+
+- tag: The tag to remove.
  
 ##### Remove Tags
- 
- 
- 
- 
  
 ```
 void removeTags(Set<String> tags)
@@ -827,7 +754,7 @@ Remove the specified set of tags from the LWAYVE SDK.
  
 **Parameters**
  
-tags: The set of tag names to remove from the LWAYVE SDK.
+- tags: The set of tag names to remove from the LWAYVE SDK.
  
 ##### Offset Time
 ```
@@ -838,17 +765,9 @@ Offset the time passed to the LWAYVE SDK. Sets the offset from the current time 
  
 **Parameters**
  
-offset: An org.threetenbp.Duration object describing the time offset the LWAYVE SDK should use.
- 
- 
- 
- 
+- offset: An org.threetenbp.Duration object describing the time offset the LWAYVE SDK should use.
  
 ##### Play
- 
- 
- 
- 
  
 ```
  
@@ -859,9 +778,6 @@ Send a command to the LWAYVE SDK to begin playback of the audio.
  
 ##### Pause
  
- 
- 
- 
 ```
 void pause()
  
@@ -870,32 +786,21 @@ Send a command to the LWAYVE SDK to pause playback of the audio.
  
 ##### Stop
  
- 
- 
- 
 ```
 void stop()
  
 ``` 
- Send a command to the LWAYVE SDK to stop playback of the audio.
+Send a command to the LWAYVE SDK to stop playback of the audio.
  
 ##### Skip to Next
- 
- 
- 
- 
  
 ```
 void next()
  
 ``` 
- Send a command to the LWAYVE SDK to skip to the next audio track.
+Send a command to the LWAYVE SDK to skip to the next audio track.
  
 ##### Skip to Previous
- 
- 
- 
- 
  
 ```
 void prev()
@@ -905,27 +810,13 @@ Send a command to the LWAYVE SDK to skip to the previous audio track.
  
 ##### Playback Status
  
- 
- 
- 
- 
 ```
 boolean isReadyToPlay()
  
 ```
 Returns ```true``` if the LWAYVE audio player is ready to begin playback.
  
- 
- 
- 
- 
- 
- 
 ##### Get Current Playlist
- 
- 
- 
- 
  
 ```
 Playlist getGeneratedPlaylist()
@@ -935,10 +826,6 @@ Returns the current LWAYVE playlist based on the current experience and location
  
 ##### Get Current Playback Position
  
- 
- 
- 
- 
 ```
 int getCurrentPlaylistItemIndex()
  
@@ -946,10 +833,6 @@ int getCurrentPlaylistItemIndex()
 Returns the current playback position index within the playing queue.
  
 ##### Get List of Items in Current Playing Queue
- 
- 
- 
- 
  
 ```
 List<QueueItem> getPlayingQueue()
@@ -959,10 +842,6 @@ Returns the list of items in the current playing queue.
  
 ##### Get the Number of Unplayed Items in Current Playing Queue
  
- 
- 
- 
- 
 ```
 int getUnplayedPlaylistItemsCount()
  
@@ -970,10 +849,6 @@ int getUnplayedPlaylistItemsCount()
 Returns the number of items in the current playing queue which have not been played.
  
 ##### Get Play Status
- 
- 
- 
- 
  
 ```
 boolean isPlaying()
@@ -983,22 +858,13 @@ Returns ```true``` to indicate the LWAYVE SDK is currently playing audio. Otherw
  
 ##### Get Duration of Currently Queued Audio Clip
  
- 
- 
- 
- 
 ```
 long getCurrentPlaylistItemDuration()
  
 ```
 Returns the duration of the currently queued audio clip in milliseconds.
  
- 
 ##### Get Latest Experience
- 
- 
- 
- 
  
 ```
 void fetchExperienceFromServer()
@@ -1008,10 +874,6 @@ void fetchExperienceFromServer()
  
 ##### Get Unique Device ID
  
- 
- 
- 
- 
 ```
 String getDeviceUUID()
  
@@ -1019,10 +881,6 @@ String getDeviceUUID()
 Returns the unique device ID for this device. Used by the LWAYVE SDK when communicating with the LWAYVE servers.
  
 ##### Flush Analytics Data
- 
- 
- 
- 
  
 ```
 void flushTrackingLogsToServer()
@@ -1032,33 +890,21 @@ Forces the LWAYVE SDK to flush any pending analytics data to the LWAYVE servers.
  
 ##### Get Experience Object
  
- 
- 
- 
- 
 ```
 ExperienceRoot getExperience()
  
 ```
- Returns an object representing the current LWAYVE Contextual Audio Experience.
+Returns an object representing the current LWAYVE Contextual Audio Experience.
  
 ##### Allow Acces to Metadata
- 
- 
- 
- 
- 
+
 ```
 MediaMetadataCompat getClipMetadata()
  
 ```
- Allows access to the Android MediaMetadataCompat metadata for the current queued audio clip.
+Allows access to the Android MediaMetadataCompat metadata for the current queued audio clip.
  
 ##### Refresh Playlist
- 
- 
- 
- 
  
 ```
 void refreshPlaylist()
@@ -1068,20 +914,13 @@ Force the LWAYVE SDK to regenerate the playlist. Under normal circumstances, thi
  
 ##### Clear Played Items
  
- 
- 
- 
- 
 ```
 void clearPlayedItems()
  
 ``` 
- Clear the history of played items in the LWAYVE SDK.
+Clear the history of played items in the LWAYVE SDK.
  
 ##### Connect to MediaBrowser
- 
- 
- 
  
 ```
 void connectToMediaBrowser(Activity activity, MediaBrowserCompat.ConnectionCallback callback)
@@ -1096,10 +935,6 @@ Connect to the LwayveSdk MediaBrowser and starts the audio player service which 
 - Callback: Pass a MediaBrowserCompat.ConnectionCallback if you wish to receive a callback when the MediaBrowser is connected or pass null to ignore the event.
  
 ##### Disconnect from MediaBrowser
- 
- 
- 
- 
  
 ```
  
@@ -1123,21 +958,20 @@ void setOnPlaybackEventListener(OnPlaybackEventListener playbackEventListener)
 Sets a listener to receive callbacks when an Lwayve playback event occurs. This can be used eg: to update your UI based on an event such as new content becoming available or the playback state changing from playing to stopped.
  
 **Parameters**:
-**playbackEventListener**: An instance of OnPlaybackEventListener
- 
- 
+
+- playbackEventListener: An instance of OnPlaybackEventListener
  
 ### Interface Summary
  
 The following interface is available:
  
-OnPlaybackEventListenter
+- PlaybackEventListenter
  
 #### OnPlaybackEventListener
  
 The following public method is available under the OnPlaybackEventListener interface:
  
-On Playback Event
+-  Playback Event
  
 ##### On Playback Event
  
@@ -1148,7 +982,7 @@ void onPlaybackEvent(PlaybackEventType eventType)
 Called when an LWAYVE playback event occurs
  
 **Parameters**: 
-**eventType**: The type of playback event being reported.
+- eventType: The type of playback event being reported.
  
 ### Event Summary
  
