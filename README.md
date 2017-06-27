@@ -574,7 +574,7 @@ The following two classes are available:
  
 The LwayveSdk class contains the following public methods:
  
--SDK Controls
+- SDK Controls
 	- Initialize the LWAYVE SDK
 	- Deinitialize the LWAYVE SDK
 	- Get Current Configuration Settings
