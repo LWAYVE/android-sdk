@@ -10,7 +10,8 @@ The following document provides background information on the LWAYVE platform as
     * [Prerequisites](#prerequisites)
     * [Add the LWAYVE and ProxSee SDKs as Dependencies](#add-the-lwayve-and-proxsee-sdks-as-dependencies)
     * [Initialize the LWAYVE and ProxSee SDKs](#initialize-the-lwayve-and-proxsee-sdks)
-    * [Set Up Communication](#set-up-communication)
+    * [Enable Communication Between the LWAYVE and ProxSee SDKs](#enable-communication-between-the-lwayve-and-proxsee-sdks)
+    * [Handle Audio](#handle-audio)
   - [Section 3: Testing LWAYVE](#section-3-testing-lwayve)
     * [Using API](#using-api)
     * [Setting Location](#setting-location)
@@ -84,7 +85,8 @@ The following image depicts the high-level LWAYVE Contextual Audio Experience wo
 Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple four-step process:
 1. Add the LWAYVE and ProxSee SDKs as Dependencies
 2. Initialize the LWAYVE and ProxSee SDKs
-3. Set Up Communication
+3. Enable Communication Between the LWAYVE and ProxSee SDKs
+4. Handle Audio
  
 ### Prerequisites
 The instructions have been provided below with the following assumptions:
@@ -172,80 +174,10 @@ ProxSeeSDKManager.getInstance().start();
  
 ```
  
- 
-### Set Up Communication
- 
-There are two options for setting up communication:
-- Option 1: Prebuilt Implementation
-- Option 2: Manual Implementation
-
-Using the prebuilt control allows for quick and easy integration, however, note that using this option does not allow for much customization. While the manual implementation may be more difficult than the prebuilt implementation outlined in Option 1, the manual implementation allows for more freedom in the look and feel of the UI elements. 
-
-#### Option 1: Prebuilt Implementation
-
-Add the control to your Activity's xml layout file:
- 
-Example
- 
-```
- 
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
- 
-	<com.lixar.lwayve.sdk.view.LwayvePlaybackControlView
-			android:id="@+id/lwayve_playback_controls"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"/>
-        
-</FrameLayout>
- 
-```
-Add the following code to your Activity:
- 
-Example
- 
-```
-public class MainActivity extends Activity {
- 
-    private LwayveSdk lwayveSdk;
- 
-	@Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
- 
-		try {
-            lwayveSdk = LwayveSdk.getInstance();
-        } catch (SdkNotInitializedException e) {
-            throw new RuntimeException("Lwayve SDK not initialized aborting");
-        }
-        
-        LwayvePlaybackControlView lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
-        lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
-            @Override
-            public void onPlaybackEvent(PlaybackEventType eventType) {
-                updateDebugInfo();
-            }
-        });
-    }
- 
-}
- 
-```
-#### Option 2: Manual Implementation
-
-There are two main steps in the manual implementation:
-- Enable Communication Between the LWAYVE and ProxSee SDKs
-- Handle Audio
- 
-##### Enable Communication Between the LWAYVE and ProxSee SDKs
+### Enable Communication Between the LWAYVE and ProxSee SDKs
 Now that the LWAYVE SDK and ProxSee SDK have been added to your project and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
  
-###### Send LWAYVE Device ID to ProxSee SDK
+#### Send LWAYVE Device ID to ProxSee SDK
 Add the following code to your mobile application.
  
  
@@ -267,7 +199,7 @@ private void setProxSeeMetadata() {
  
 ```
  
-###### Send ProxSee Locations to LWAYVE SDK
+#### Send ProxSee Locations to LWAYVE SDK
 Add the following code to your mobile application.
  
 ```
@@ -339,10 +271,77 @@ private void onTagsLost(Set<String> tags) {
  
 ```
  
-##### Handle Audio 
+### Handle Audio 
 You must configure your mobile application to send playback commands (e.g., Play, Pause) to the LWAYVE SDK as well as receive playback commands from the LWAYVE SDK. 
+
+There are two options for handling audio:
+- Option 1: Prebuilt Implementation
+- Option 2: Manual Implementation
+
+Using the prebuilt control allows for quick and easy integration, however, note that using this option does not allow for much customization. While the manual implementation may be more difficult than the prebuilt implementation outlined in Option 1, the manual implementation allows for more freedom in the look and feel of the UI elements. 
+
+#### Option 1: Prebuilt Implementation
+
+Add the control to your Activity's xml layout file:
  
-###### Send Playback Commands to the LWAYVE SDK
+Example
+ 
+```
+ 
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+ 
+	<com.lixar.lwayve.sdk.view.LwayvePlaybackControlView
+			android:id="@+id/lwayve_playback_controls"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"/>
+        
+</FrameLayout>
+ 
+```
+Add the following code to your Activity:
+
+Example
+ 
+```
+public class MainActivity extends Activity {
+ 
+    private LwayveSdk lwayveSdk;
+ 
+	@Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+ 
+		try {
+            lwayveSdk = LwayveSdk.getInstance();
+        } catch (SdkNotInitializedException e) {
+            throw new RuntimeException("Lwayve SDK not initialized aborting");
+        }
+        
+        LwayvePlaybackControlView lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
+        lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
+            @Override
+            public void onPlaybackEvent(PlaybackEventType eventType) {
+                updateDebugInfo();
+            }
+        });
+    }
+ 
+}
+ 
+```
+#### Option 2: Manual Implementation
+
+There are two main steps in the manual implementation:
+- Send Playback Commands to the LWAYVE SDK
+- Receive Playback Commands from the LWAYVE SDK
+ 
+##### Send Playback Commands to the LWAYVE SDK
 The following code is an example of how you can configure a mobile application to send playback commands to the LWAYVE SDK. Note that this is example code. Your actual code may differ. 
  
 ```
@@ -405,7 +404,7 @@ private void updatePlayBtnState() {
     playBtn.setImageResource(res);
 }
 ```
-###### Receiving Playback Commands from the LWAYVE SDK
+##### Receive Playback Commands from the LWAYVE SDK
  
 Based on the example provided above on configuring a mobile application to send playback commands to the LWAYVE SDK, the following example is an example of companion code for receiving playback commands from the LWAYVE SDK. Note that this is example code. Your code may differ depending on how you implement the sending of playback commands. 
  
