@@ -12,7 +12,7 @@ android {
         project.ext.set("archivesBaseName", "LwayveSampleA-" + defaultConfig.versionName)
 
         buildConfigField 'String', 'LWAYVE_BASE_URL', '"https://gateway.lwayve.com/"'
-        buildConfigField 'String', 'LWAYVE_AUTH_KEY', '"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5NTE6Y29tLmxpeGFyLmx3YXl2ZS50ZXN0YXBwIiwiYXV0aCI6IkNVU1RPTUVSX0lEOjEsUk9MRV9NT0JJTEVfQVBQTElDQVRJT05fUixST0xFX01PQklMRV9BUFBMSUNBVElPTl9SVyJ9.TcH2Banr_wb6Ef4TjXQbvnDFLsPhA16_sIauDIr-L4x-SEMcI7is0motSE_6U7QqTbjnUs1h2eXg0PGEI3iegQ"'
+        buildConfigField 'String', 'LWAYVE_AUTH_KEY', '""'
     }
     buildTypes {
         release {
