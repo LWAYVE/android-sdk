@@ -159,7 +159,7 @@ LWAYVE supports the following configuration options which can be set in the Lway
 - {baseUrl} (optional) - Configures the url used to communicate with the LWAYVE backend.
 - {language} (optional) - Sets the language preferred language to use for audio clips.
 - {maxCacheAge} (optional) - Sets the length of time (in days) to keep audio files in the cache. Set to 0 to keep files indefinitely.
-- {maxCacheSize} (optional) - Sets the maximum amount of audio data to cache (in bytes). Set to 0 for no size limit.
+- {maxCacheSize} (optional) - Sets the maximum amount of audio data to cache (in bytes).
 - {notificationLargeIconRes} (optional) - Sets the drawable resource to use for the icon in the media player notification.
 - {notificationSmallIconRes} (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
 
