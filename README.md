@@ -151,6 +151,20 @@ try {
 }
  
 ```
+
+#### Configuration Options
+LWAYVE supports the following configuration options which can be set in the LwayveSdkConfiguration object passed to the SDK on initialization:
+
+- {authToken} (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
+- {baseUrl} (optional) - Configures the url used to communicate with the LWAYVE backend.
+- {language} (optional) - Sets the language preferred language to use for audio clips.
+- {maxCacheAge} (optional) - Sets the length of time (in days) to keep audio files in the cache. Set to 0 to keep files indefinitely.
+- {maxCacheSize} (optional) - Sets the maximum amount of audio data to cache (in bytes). Set to 0 for no size limit.
+- {notificationLargeIconRes} (optional) - Sets the drawable resource to use for the icon in the media player notification.
+- {notificationSmallIconRes} (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
+
+See the [https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html](LwayveSdkConfiguration.Builder)
+ section of the Javadoc for more details.
  
 #### Initialize the ProxSee SDK
 Add the following code to your mobile application's initialization process (e.g., Application.onCreate()).
