@@ -163,7 +163,7 @@ LWAYVE supports the following configuration options which can be set in the Lway
 - {notificationLargeIconRes} (optional) - Sets the drawable resource to use for the icon in the media player notification.
 - {notificationSmallIconRes} (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
 
-See the [https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html](LwayveSdkConfiguration.Builder)
+See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html)
  section of the Javadoc for more details.
  
 #### Initialize the ProxSee SDK
