@@ -477,6 +477,6 @@ private boolean isFirstItem(int index) {
 You can test LWAYVE by using the API documented on Swagger. You can access Swagger through the following URL: [https://gateway.lwayve.com/swagger-ui/index.html](https://gateway.lwayve.com/swagger-ui/index.html)
  
 ### Classes 
-For Javadoc documentation, refer to  [https://lwayve.github.io/android/docs/javadoc/reference/classes.htm](#https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
+For Javadoc documentation, refer to  [https://lwayve.github.io/android/docs/javadoc/reference/classes.html](#https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
 
  
