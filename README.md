@@ -287,6 +287,16 @@ public void reloadExistingTags() {
     }
     onTagsFound(tags);
 }
+
+private ProxSeeSDKComponent getProxSeeSDKComponent() {
+    try {
+        Field proxSeeSDKComponent = ProxSeeSDKManager.class.getDeclaredField("proxSeeSDKComponent");
+        proxSeeSDKComponent.setAccessible(true);
+        return (ProxSeeSDKComponent) proxSeeSDKComponent.get(proxSeeSDKManager);
+    }catch (Exception e) {
+        throw new RuntimeException(e);
+    }
+}
  
 ```
  
