@@ -236,13 +236,14 @@ public void onDestroy() {
  
 public class TagReceiver extends ProxSeeBroadcastReceiver {
  
-@Override
-public void didChangeTagsSet(BeaconNotificationObject beaconNotificationObject) {
-    Log.d(LOGTAG, "Tags Set Changed");
-    setCurrentTags(beaconNotificationObject);
-    findExpiredTags(beaconNotificationObject);
-    findNewTags(beaconNotificationObject);
-}
+    @Override
+    public void didChangeTagsSet(BeaconNotificationObject beaconNotificationObject) {
+    	Log.d(LOGTAG, "Tags Set Changed");
+	setCurrentTags(beaconNotificationObject);
+	findExpiredTags(beaconNotificationObject);
+	findNewTags(beaconNotificationObject);
+    }
+    
 }
  
 private void setCurrentTags(BeaconNotificationObject beaconNotificationObject) {
@@ -443,7 +444,7 @@ private PlaybackEventsBroadcastReceiver playbackEventsReceiver;
  
 @Override
 protected void onCreate(@Nullable Bundle savedInstanceState) {
-	... (See above example)
+    ... (See above example)
  
     playbackEventsReceiver = new PlaybackEventsBroadcastReceiver();
     IntentFilter filter = new IntentFilter(PLAYBACK_AUDIO_EVENT_ACTION);
