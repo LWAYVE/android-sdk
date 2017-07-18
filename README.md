@@ -225,6 +225,7 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
  
     }
     registerReceiver(tagReceiver, new IntentFilter(ProxSeeBroadcaster.TAGS_CHANGED_ACTION));
+    reloadExistingTags();
 }
  
 @Override
@@ -276,6 +277,15 @@ private void findExpiredTags(BeaconNotificationObject bno) {
 private void onTagsLost(Set<String> tags) {
     lwayveSdk.removeLocations(tags);
 }
+
+public void reloadExistingTags() {
+    List<ProxSeeBeacon> beacons = getProxSeeSDKComponent().proxSeeBeaconRepository().findAll(true, true);
+    Set<String> tags = new HashSet<>();
+    for (ProxSeeBeacon beacon : beacons) {
+        tags.addAll(Arrays.asList(beacon.getTags()));
+    }
+    onTagsFound(tags);
+}
  
 ```
  
@@ -319,19 +329,20 @@ Example
 public class MainActivity extends Activity {
  
     private LwayveSdk lwayveSdk;
+    private LwayvePlaybackControlView lwayvePlaybackControlView;
  
-	@Override
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
  
-		try {
+	try {
             lwayveSdk = LwayveSdk.getInstance();
         } catch (SdkNotInitializedException e) {
             throw new RuntimeException("Lwayve SDK not initialized aborting");
         }
         
-        LwayvePlaybackControlView lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
+        lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
         lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
             @Override
             public void onPlaybackEvent(PlaybackEventType eventType) {
@@ -339,7 +350,17 @@ public class MainActivity extends Activity {
             }
         });
     }
- 
+    
+    @Override
+    protected void onResume() {
+    	lwayvePlaybackControlView.connectToMediaBrowser();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        lwayvePlaybackControlView.disconnectFromMediaBrowser();
+    }
 }
  
 ```
