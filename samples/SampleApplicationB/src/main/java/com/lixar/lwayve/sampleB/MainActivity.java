@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.lixar.lwayve.sampleB.R;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
+import com.lixar.lwayve.sdk.services.audio.LwayveAudioPlayerService;
 import com.lixar.lwayve.sdk.services.audio.PlaybackEventType;
 import com.lixar.lwayve.sdk.view.LwayvePlaybackControlView;
 
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText userLikesInput;
     private final Set<String> locations = new HashSet<>();
     private final Set<String> userLikes = new HashSet<>();
+    private LwayvePlaybackControlView lwayvePlaybackControls;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkPermissions();
         initializeLwayveSdk();
-        LwayvePlaybackControlView lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
+        lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
         lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
             @Override
             public void onPlaybackEvent(PlaybackEventType eventType) {
@@ -77,6 +80,18 @@ public class MainActivity extends AppCompatActivity {
         } catch (SdkNotInitializedException e) {
             throw new RuntimeException("Lwayve SDK not initialized aborting");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lwayvePlaybackControls.connectToMediaBrowser();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        lwayvePlaybackControls.disconnectFromMediaBrowser();
     }
 
     @Override
