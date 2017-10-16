@@ -126,10 +126,10 @@ compile 'io.proxsee.sdk:proxsee-sdk:{sdkVersion}'
 ```
  
 ### Initialize the LWAYVE and ProxSee SDKs
-The next step is to initialize (launch) both the LWAYVE SDK and the ProxSee SDK. 
+The next step is to initialize both the LWAYVE SDK and the ProxSee SDK. 
  
 #### Initialize the LWAYVE SDK
-Add the following code to your mobile application's initialization process (e.g., Application.onCreate()).
+Add the following code to your Application class' initialization process (e.g., Application.onCreate()).
  
 **Parameters**
  
@@ -166,6 +166,22 @@ LWAYVE supports the following configuration options which can be set in the Lway
 See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html)
  section of the Javadoc for more details.
  
+##### Initialize the SDK asynchronously
+You can optionally initialize the LWAYVE SDK asynchonously on a background thread so that the SDK doesn't tie up the application's main UI thread on app start up. 
+
+**Code**
+
+```
+LwayveSdk lwayveSdk;
+LwayveAsyncProvider provider = new LwayveAsyncProvider(this, configuration);
+provider.connect(new LwayveConnectionCallback() {
+    public void onConnected(LwayveSdk instance) {
+        lwayveSdk = instance;
+    }
+});
+
+```
+ 
 #### Initialize the ProxSee SDK
 Add the following code to your mobile application's initialization process (e.g., Application.onCreate()).
  
@@ -199,7 +215,7 @@ private void setProxSeeMetadata() {
         @Override
         public void onUpdateCompleted(boolean success, Exception e) {
             if (!success) {
-                Log.e(LOGTAG, "Error sending lwayve deviceid to proxsee");
+                Log.e("CompletionHandler", "Error sending lwayve deviceid to proxsee");
             }
         }
     });
@@ -208,7 +224,7 @@ private void setProxSeeMetadata() {
 ```
  
 #### Send ProxSee Locations to LWAYVE SDK
-Add the following code to your mobile application.
+Add the following code to your Application.
  
 ```
  
@@ -219,11 +235,7 @@ private TagReceiver tagReceiver = new TagReceiver();
 @Override
 protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    try {
-        lwayveSdk = LwayveSdk.getInstance();
-    } catch (SdkNotInitializedException e) {
- 
-    }
+    ...
     registerReceiver(tagReceiver, new IntentFilter(ProxSeeBroadcaster.TAGS_CHANGED_ACTION));
     reloadExistingTags();
 }
@@ -231,6 +243,7 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 @Override
 public void onDestroy() {
     super.onDestroy();
+    ...
     unregisterReceiver(tagReceiver);
 }
  
@@ -238,7 +251,7 @@ public class TagReceiver extends ProxSeeBroadcastReceiver {
  
     @Override
     public void didChangeTagsSet(BeaconNotificationObject beaconNotificationObject) {
-    	Log.d(LOGTAG, "Tags Set Changed");
+    	Log.d("TagReceiver", "Tags Set Changed");
 	setCurrentTags(beaconNotificationObject);
 	findExpiredTags(beaconNotificationObject);
 	findNewTags(beaconNotificationObject);
@@ -293,7 +306,7 @@ private ProxSeeSDKComponent getProxSeeSDKComponent() {
         Field proxSeeSDKComponent = ProxSeeSDKManager.class.getDeclaredField("proxSeeSDKComponent");
         proxSeeSDKComponent.setAccessible(true);
         return (ProxSeeSDKComponent) proxSeeSDKComponent.get(proxSeeSDKManager);
-    }catch (Exception e) {
+    } catch (Exception e) {
         throw new RuntimeException(e);
     }
 }
@@ -301,15 +314,9 @@ private ProxSeeSDKComponent getProxSeeSDKComponent() {
 ```
  
 ### Handle Audio 
-You must configure your mobile application to send playback commands (e.g., Play, Pause) to the LWAYVE SDK as well as receive playback commands from the LWAYVE SDK. 
+You must configure your application to send playback commands (e.g., Play, Pause) to the LWAYVE SDK as well as receive playback commands from the LWAYVE SDK. 
 
-There are two options for handling audio:
-- Option 1: Prebuilt Implementation
-- Option 2: Manual Implementation
-
-Using the prebuilt control allows for quick and easy integration, however, note that using this option does not allow for much customization. While the manual implementation may be more difficult than the prebuilt implementation outlined in Option 1, the manual implementation allows for more freedom in the look and feel of the UI elements. 
-
-#### Option 1: Prebuilt Implementation
+#### Implementing the LWAYVE playback control in your application's UI.
 
 Add the control to your Activity's xml layout file:
  
@@ -375,146 +382,48 @@ public class MainActivity extends Activity {
 }
  
 ```
-#### Option 2: Manual Implementation
 
-There are two main steps in the manual implementation:
-- Send Playback Commands to the LWAYVE SDK
-- Receive Playback Commands from the LWAYVE SDK
- 
-##### Send Playback Commands to the LWAYVE SDK
-The following code is an example of how you can configure a mobile application to send playback commands to the LWAYVE SDK. Note that this is example code. Your actual code may differ. 
- 
-```
-private LwayveSdk lwayveSdk;
-private Button playBtn;
-private Button nextBtn;
-private Button prevBtn;
-private boolean isPlaying;
- 
-@Override
-protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
- 
-    try {
-        lwayveSdk = LwayveSdk.getInstance();
-    } catch (SdkNotInitializedException e) {
- 
-    }
- 
-    playBtn = (Button) findViewById(R.id.playBtn);
-    nextBtn = (Button) findViewById(R.id.nextBtn);
-    prevBtn = (Button) findViewById(R.id.prevBtn);
- 
-    playBtn.setEnabled(false);
-    prevBtn.setEnabled(false);
-    nextBtn.setEnabled(false);
- 
-    playBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!isPlaying) {
-                lwayveSdk.play();
-                isPlaying = true;
-            } else {
-                lwayveSdk.pause();
-                isPlaying = false;
-            }
-            updatePlayBtnState();
-        }
-    });
- 
-    nextBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            lwayveSdk.next();
-        }
-    });
- 
-    prevBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            lwayveSdk.prev();
-        }
-    });
-}
- 
-private void updatePlayBtnState() {
-    int res = isPlaying ? R.drawable.ic_stop_selector : R.drawable.ic_play_selector;
-    playBtn.setImageResource(res);
-}
-```
 ##### Receive Playback Commands from the LWAYVE SDK
  
-Based on the example provided above on configuring a mobile application to send playback commands to the LWAYVE SDK, the following example is an example of companion code for receiving playback commands from the LWAYVE SDK. Note that this is example code. Your code may differ depending on how you implement the sending of playback commands. 
+If you wish to receive a callback when playback events occur in your application, you can register an OnPlaybackEventListener callback through the playback control:
  
 ```
-... (See above example)
-private PlaybackEventsBroadcastReceiver playbackEventsReceiver;
+private PlaybackEventReceiver playbackEventReceiver;
  
 @Override
 protected void onCreate(@Nullable Bundle savedInstanceState) {
-    ... (See above example)
+    ...
  
-    playbackEventsReceiver = new PlaybackEventsBroadcastReceiver();
-    IntentFilter filter = new IntentFilter(PLAYBACK_AUDIO_EVENT_ACTION);
- 
-    LocalBroadcastManager.getInstance(this).registerReceiver(playbackEventsReceiver, filter);
+    playbackEventReceiver = new PlaybackEventReceiver();
+    lwayvePlaybackControlView.setOnPlaybackEventListener(playbackEventReceiver);
 }
  
-@Override
-public void onDestroy() {
-    super.onDestroy();
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(playbackEventsReceiver);
-}
- 
-private class PlaybackEventsBroadcastReceiver extends BroadcastReceiver {
- 
-    private final String LOGTAG = PlaybackEventsBroadcastReceiver.class.getSimpleName();
+private class PlaybackEventReceiver implements OnPlaybackEventListener {
  
     @Override
-    public void onReceive(Context context, Intent intent) {
-        PlaybackEventType eventType = (PlaybackEventType) intent.getSerializableExtra(BroadcastHelper.PLAYBACK_AUDIO_EVENT_TYPE_KEY);
- 
+    public void onPlaybackEvent(PlaybackEvent eventType) {
         int index = lwayveSdk.getCurrentPlaylistItemIndex();
         switch (eventType) {
             case PREPARED_EVENT:
-                playBtn.setEnabled(true);
-                prevBtn.setEnabled(!isFirstItem(index));
-                nextBtn.setEnabled(!isLastItem(index));
+                // do something
                 break;
             case NOT_PREPARED_EVENT:
-                playBtn.setEnabled(false);
-                prevBtn.setEnabled(false);
-                nextBtn.setEnabled(false);
+                // do something
                 break;
             case END_OF_PLAYLIST_EVENT:
-                isPlaying = false;
-                prevBtn.setEnabled(true);
-                playBtn.setEnabled(false);
-                nextBtn.setEnabled(false);
-                updatePlayBtnState();
+                // do something
                 break;
             case STOP_EVENT:
             case PAUSE_EVENT:
                 isPlaying = false;
-                updatePlayBtnState();
                 break;
             case PLAY_EVENT:
                 isPlaying = true;
-                updatePlayBtnState();
                 break;
         }
     }
 }
  
-private boolean isLastItem(int index) {
-    return index >= lwayveSdk.getPlayingQueue().size() - 1;
-}
- 
-private boolean isFirstItem(int index) {
-    return index == 0;
-}
 ```
  
 ## Section 3: Reference Documentation
