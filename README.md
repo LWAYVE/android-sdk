@@ -11,7 +11,7 @@ The following document provides background information on the LWAYVE platform as
     * [Add the LWAYVE and ProxSee SDKs as Dependencies](#add-the-lwayve-and-proxsee-sdks-as-dependencies)
     * [Initialize the LWAYVE and ProxSee SDKs](#initialize-the-lwayve-and-proxsee-sdks)
     * [Enable Communication Between the LWAYVE and ProxSee SDKs](#enable-communication-between-the-lwayve-and-proxsee-sdks)
-    * [Handle Audio](#handle-audio)
+    * [Handling Audio](#handling-audio)
   - [Section 3: Reference Documentation](#section-3-reference-documentation)
     * [API](#api)
     * [Classes](#classes)
