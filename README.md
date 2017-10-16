@@ -129,7 +129,7 @@ compile 'io.proxsee.sdk:proxsee-sdk:{sdkVersion}'
 The next step is to initialize both the LWAYVE SDK and the ProxSee SDK. 
  
 #### Initialize the LWAYVE SDK
-Add the following code to your Application class' initialization process (e.g., Application.onCreate()).
+Add the following code to your Application class' initialization process (e.g., Application.onCreate()):
  
 **Parameters**
  
@@ -183,7 +183,7 @@ provider.connect(new LwayveConnectionCallback() {
 ```
  
 #### Initialize the ProxSee SDK
-Add the following code to your mobile application's initialization process (e.g., Application.onCreate()).
+Add the following code to your Application class' initialization process (e.g., Application.onCreate()):
  
 **Parameters**
  
@@ -202,7 +202,7 @@ ProxSeeSDKManager.getInstance().start();
 Now that the LWAYVE SDK and ProxSee SDK have been added to your project and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
  
 #### Send LWAYVE Device ID to ProxSee SDK
-Add the following code to your mobile application.
+Add the following code to your Application class:
  
  
 ```
@@ -224,7 +224,7 @@ private void setProxSeeMetadata() {
 ```
  
 #### Send ProxSee Locations to LWAYVE SDK
-Add the following code to your Application.
+Add the following code to your Application class:
  
 ```
  
@@ -313,14 +313,13 @@ private ProxSeeSDKComponent getProxSeeSDKComponent() {
  
 ```
  
-### Handle Audio 
-You must configure your application to send playback commands (e.g., Play, Pause) to the LWAYVE SDK as well as receive playback commands from the LWAYVE SDK. 
+### Handling Audio
+In order to interact with the LWAYVE SDK you'll need to add the playback control to your applications UI. If you wish to listen for playback events broadcast by the SDK, 
+you may optionally set an OnPlaybackEventListener.
 
 #### Implementing the LWAYVE playback control in your application's UI.
 
 Add the control to your Activity's xml layout file:
- 
-Example
  
 ```
  
@@ -339,9 +338,7 @@ Example
 </FrameLayout>
  
 ```
-Add the following code to your Activity:
-
-Example
+Add the following code to the Activity hosting the playback control:
  
 ```
 public class MainActivity extends Activity {
