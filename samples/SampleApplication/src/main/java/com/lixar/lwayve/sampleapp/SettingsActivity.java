@@ -1,8 +1,12 @@
 package com.lixar.lwayve.sampleapp;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,18 +14,33 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.core.LwayveSdkConfiguration;
+import com.lixar.lwayve.sdk.events.EventHelper;
+import com.lixar.lwayve.sdk.events.PlaybackEvent;
 import com.lixar.lwayve.sdk.exceptions.InvalidSdkConfigurationException;
 import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
 import com.lixar.lwayve.sdk.utils.LanguageManager;
+import com.lixar.lwayve.sdk.utils.UrlUtils;
 
 import java.util.List;
+
+import timber.log.Timber;
+
+import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_AUTH_TOKEN;
+import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_BASE_URL;
+import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_LANGUAGE;
+import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_MAX_CACHE_AGE;
+import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_MAX_CACHE_SIZE;
+import static com.lixar.lwayve.sdk.events.EventHelper.PLAYBACK_AUDIO_EVENT_ACTION;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -36,9 +55,10 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    public final static String TAG = SettingsActivity.class.getSimpleName();
-    private static boolean lwayveSdkConfigurationChanged = false;
-    private static LwayveSdkConfiguration newConfiguration;
+    private LwayveSdk lwayveSdk;
+
+    private SharedPreferences prefs;
+    private ProgressDialog progressDialog;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent( context, SettingsActivity.class );
@@ -57,44 +77,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String key = preference.getKey();
             String stringValue = value.toString();
 
-            preference.setSummary(stringValue);
-
-            try {
-                if (LwayveSdk.getInstance() != null) {
-                    try {
-
-                        LwayveSdkConfiguration originalConfiguration = LwayveSdk.getInstance().getConfiguration();
-
-                        LwayveSdkConfiguration.Builder newConfigurationBuilder;
-                        if (newConfiguration == null) {
-                            newConfigurationBuilder = new LwayveSdkConfiguration.Builder().from(originalConfiguration);
-                        } else {
-                            newConfigurationBuilder = new LwayveSdkConfiguration.Builder().from(newConfiguration);
-                        }
-
-                        if (key.equals("sdk_base_url")) {
-                            newConfigurationBuilder.setBaseUrl(stringValue);
-                        } else if (key.equals("sdk_auth_key")) {
-                            newConfigurationBuilder.setAuthenticationToken(stringValue);
-                        } else if (key.equals("language_preference")) {
-                            newConfigurationBuilder.setLanguage(LanguageManager.getLanguageForString(stringValue));
-                        } else if (key.equals("sdk_cache_max_age")) {
-                            newConfigurationBuilder.setMaxCacheAge(Integer.parseInt(stringValue));
-                        } else if (key.equals("sdk_cache_size")) {
-                            newConfigurationBuilder.setMaxCacheSize(Integer.parseInt(stringValue));
-                        }
-
-                        newConfiguration = newConfigurationBuilder.build();
-
-                        lwayveSdkConfigurationChanged = true;
-                    } catch (IllegalStateException ex) {
-                        Log.e(TAG, ex.getMessage());
-                    }
-                }
-            } catch (SdkNotInitializedException ex) {
-                Log.e(TAG, ex.getMessage());
+            if (TextUtils.equals(key, PREFS_KEY_BASE_URL) && (TextUtils.isEmpty(stringValue) || !UrlUtils.isUrlValid(stringValue))) {
                 return false;
             }
+
+            if (TextUtils.equals(key, PREFS_KEY_AUTH_TOKEN) && TextUtils.isEmpty(stringValue)) {
+                return false;
+            }
+
+            if (TextUtils.equals(key, PREFS_KEY_MAX_CACHE_AGE) && TextUtils.isEmpty(stringValue)) {
+                return false;
+            }
+
+            if (TextUtils.equals(key, PREFS_KEY_MAX_CACHE_SIZE) && TextUtils.isEmpty(stringValue)) {
+                return false;
+            }
+
+            preference.setSummary(stringValue);
+
             return true;
         }
     };
@@ -133,23 +133,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
-    }
 
-    @Override
-    protected void onDestroy() {
-        if (lwayveSdkConfigurationChanged) {
-            try {
-                LwayveSdkConfiguration updatedConfig = new LwayveSdkConfiguration.Builder().from(newConfiguration).build();
-                LwayveSdk.getInstance().updateConfiguration(getApplicationContext(), updatedConfig);
-            } catch (SdkNotInitializedException ex) {
-                Log.e(TAG, ex.getMessage());
-            } catch (InvalidSdkConfigurationException ex) {
-                Log.e(TAG, ex.getMessage());
-            } finally {
-                lwayveSdkConfigurationChanged = false;
-            }
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        try {
+            lwayveSdk = LwayveSdk.getInstance();
+        } catch (SdkNotInitializedException e) {
+            Timber.e(e);
         }
-        super.onDestroy();
     }
 
     /**
@@ -161,6 +152,143 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            return;
+        }
+
+        boolean lwayveUpdated = isLwayveConfigUpdated();
+
+        if (lwayveUpdated) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle(R.string.updating);
+            progressDialog.setMessage(getString(R.string.please_wait));
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
+            updateLwayveConfiguration();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean isLwayveConfigUpdated() {
+        boolean lwayveConfigUpdated = false;
+
+        LwayveSdkConfiguration lwayveConfig = lwayveSdk.getConfiguration();
+
+        if (isBaseUrlChanged(lwayveConfig)) {
+            lwayveConfigUpdated = true;
+        }
+
+        if (isAuthTokenChanged(lwayveConfig)) {
+            lwayveConfigUpdated = true;
+        }
+
+        if (isLanguageChanged(lwayveConfig)) {
+            lwayveConfigUpdated = true;
+        }
+
+        if (isMaxCacheAgeChanged(lwayveConfig)) {
+            lwayveConfigUpdated = true;
+        }
+
+        if (isMaxCacheSizeChanged(lwayveConfig)) {
+            lwayveConfigUpdated = true;
+        }
+
+        return lwayveConfigUpdated;
+    }
+
+    private void updateLwayveConfiguration() {
+        if (lwayveSdk == null) {
+            Timber.e("updateLwayveConfiguration() LwayveSdk is not initialized!");
+            return;
+        }
+
+        LwayveSdkConfiguration lwayveConfig = lwayveSdk.getConfiguration();
+        LwayveSdkConfiguration.Builder newConfigBuilder = new LwayveSdkConfiguration.Builder().from(lwayveConfig);
+
+        if (isBaseUrlChanged(lwayveConfig)) {
+            newConfigBuilder.setBaseUrl(getSavedBaseUrl());
+        }
+
+        if (isAuthTokenChanged(lwayveConfig)) {
+            newConfigBuilder.setAuthenticationToken(getSavedAuthToken());
+        }
+
+        if (isLanguageChanged(lwayveConfig)) {
+            newConfigBuilder.setLanguage(LanguageManager.getLanguageForString(getSavedLanguage()));
+        }
+
+        if (isMaxCacheAgeChanged(lwayveConfig)) {
+            newConfigBuilder.setMaxCacheAge(Integer.parseInt(getSavedMaxCacheAge()));
+        }
+
+        if (isMaxCacheSizeChanged(lwayveConfig)) {
+            newConfigBuilder.setMaxCacheSize(Long.parseLong(getSavedMaxCacheSize()));
+        }
+
+        PlaybackEventsBroadcastReceiver playbackEventsReceiver = new PlaybackEventsBroadcastReceiver();
+        IntentFilter filter = new IntentFilter(PLAYBACK_AUDIO_EVENT_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(playbackEventsReceiver, filter);
+
+        try {
+            lwayveSdk.updateConfiguration(getApplicationContext(), newConfigBuilder.build());
+        } catch (InvalidSdkConfigurationException ex) {
+            Timber.e(ex.getMessage());
+            Toast.makeText(this, "LWAYVE SDK Config invalid. LWAYVE was NOT reinitialized.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isBaseUrlChanged(LwayveSdkConfiguration lwayveConfig) {
+        return !TextUtils.equals(getSavedBaseUrl(), lwayveConfig.getBaseUrl());
+    }
+
+    @NonNull
+    private String getSavedBaseUrl() {
+        return prefs.getString(PREFS_KEY_BASE_URL, "");
+    }
+
+    private boolean isAuthTokenChanged(LwayveSdkConfiguration lwayveConfig) {
+        return !TextUtils.equals(getSavedAuthToken(), lwayveConfig.getAuthToken());
+    }
+
+    @NonNull
+    private String getSavedAuthToken() {
+        return prefs.getString(PREFS_KEY_AUTH_TOKEN, "");
+    }
+
+    private boolean isLanguageChanged(LwayveSdkConfiguration lwayveConfig) {
+        return !TextUtils.equals(getSavedLanguage(), lwayveConfig.getLanguage().getLanguage());
+    }
+
+    @NonNull
+    private String getSavedLanguage() {
+        return prefs.getString(PREFS_KEY_LANGUAGE, "");
+    }
+
+    private boolean isMaxCacheAgeChanged(LwayveSdkConfiguration lwayveConfig) {
+        return !TextUtils.equals(getSavedMaxCacheAge(), String.valueOf(lwayveConfig.getMaxCacheAge()));
+    }
+
+    @NonNull
+    private String getSavedMaxCacheAge() {
+        return prefs.getString(PREFS_KEY_MAX_CACHE_AGE, "");
+    }
+
+    private boolean isMaxCacheSizeChanged(LwayveSdkConfiguration lwayveConfig) {
+        return !TextUtils.equals(getSavedMaxCacheSize(), String.valueOf(lwayveConfig.getMaxCacheSize()));
+    }
+
+    @NonNull
+    private String getSavedMaxCacheSize() {
+        return prefs.getString(PREFS_KEY_MAX_CACHE_SIZE, "");
     }
 
     @Override
@@ -217,21 +345,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sdk_base_url"));
-            bindPreferenceSummaryToValue(findPreference("sdk_auth_key"));
-            bindPreferenceSummaryToValue(findPreference("language_preference"));
-            bindPreferenceSummaryToValue(findPreference("sdk_cache_max_age"));
-            bindPreferenceSummaryToValue(findPreference("sdk_cache_size"));
+            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_BASE_URL));
+            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_AUTH_TOKEN));
+            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_LANGUAGE));
+            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_MAX_CACHE_AGE));
+            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_MAX_CACHE_SIZE));
         }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                NavUtils.navigateUpFromSameTask(getActivity());
+                ((SettingsActivity)getActivity()).onBackPressed();
                 return true;
             }
             return super.onOptionsItemSelected(item);
         }
     }
+
+    private class PlaybackEventsBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PlaybackEvent eventType = (PlaybackEvent) intent.getSerializableExtra(EventHelper.PLAYBACK_AUDIO_EVENT_TYPE_KEY);
+            if (eventType == PlaybackEvent.SDK_CONFIG_UPDATED_EVENT) {
+                LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                SettingsActivity.super.onBackPressed();
+            }
+        }
+    }
+
 }

@@ -36,5 +36,7 @@
     <string name="locations">Locations</string>
     <string name="refresh">Refresh</string>
     <string name="new_activity">New Activity</string>
+    <string name="updating">Updating</string>
+    <string name="please_wait">Please wait&#8230;</string>
     <!-- End Strings related to Settings -->
 </resources>
