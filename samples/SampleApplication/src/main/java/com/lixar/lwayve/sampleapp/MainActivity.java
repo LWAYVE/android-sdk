@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.events.OnPlaybackEventListener;
 import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
@@ -89,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeLwayveSdk() {
-        try {
-            lwayveSdk = LwayveSdk.getInstance();
-        } catch (SdkNotInitializedException e) {
-            throw new RuntimeException("Lwayve SDK not initialized aborting");
-        }
+        LwayveSdk.connect(new LwayveConnectionCallback() {
+            @Override
+            public void onConnected(@NonNull LwayveSdk sdk) {
+                lwayveSdk = sdk;
+            }
+        });
     }
 
     @Override

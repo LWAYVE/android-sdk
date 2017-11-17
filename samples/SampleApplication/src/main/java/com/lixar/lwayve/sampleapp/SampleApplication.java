@@ -3,11 +3,13 @@ package com.lixar.lwayve.sampleapp;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
+import com.lixar.lwayve.proxsee.ProxSeeSdkAdapterFactory;
+import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.core.LwayveSdkConfiguration;
 import com.lixar.lwayve.sdk.exceptions.InvalidSdkConfigurationException;
-import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
 import com.lixar.lwayve.sdk.utils.LanguageManager;
 
 import timber.log.Timber;
@@ -71,15 +73,19 @@ public class SampleApplication extends Application {
                 .setLanguage(LanguageManager.getLanguageForString(language))
                 .setMaxCacheAge(Integer.parseInt(maxCacheAge))
                 .setMaxCacheSize(Integer.parseInt(maxCacheSize))
+                .setProxSeeSdkAdapterFactory(new ProxSeeSdkAdapterFactory(this))
                 .build();
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-        try {
-            LwayveSdk.getInstance().deinit();
-        } catch (SdkNotInitializedException e) {}
+        LwayveSdk.connect(new LwayveConnectionCallback() {
+            @Override
+            public void onConnected(@NonNull LwayveSdk lwayveSdk) {
+                lwayveSdk.deinit();
+            }
+        });
     }
 
 }

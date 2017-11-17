@@ -22,12 +22,12 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.core.LwayveSdkConfiguration;
 import com.lixar.lwayve.sdk.events.EventHelper;
 import com.lixar.lwayve.sdk.events.PlaybackEvent;
 import com.lixar.lwayve.sdk.exceptions.InvalidSdkConfigurationException;
-import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
 import com.lixar.lwayve.sdk.utils.LanguageManager;
 import com.lixar.lwayve.sdk.utils.UrlUtils;
 
@@ -136,11 +136,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        try {
-            lwayveSdk = LwayveSdk.getInstance();
-        } catch (SdkNotInitializedException e) {
-            Timber.e(e);
-        }
+        LwayveSdk.connect(new LwayveConnectionCallback() {
+            @Override
+            public void onConnected(@NonNull LwayveSdk sdk) {
+                lwayveSdk = sdk;
+            }
+        });
     }
 
     /**
@@ -239,7 +240,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(playbackEventsReceiver, filter);
 
         try {
-            lwayveSdk.updateConfiguration(getApplicationContext(), newConfigBuilder.build());
+            lwayveSdk.updateConfiguration(newConfigBuilder.build());
         } catch (InvalidSdkConfigurationException ex) {
             Timber.e(ex.getMessage());
             Toast.makeText(this, "LWAYVE SDK Config invalid. LWAYVE was NOT reinitialized.", Toast.LENGTH_SHORT).show();

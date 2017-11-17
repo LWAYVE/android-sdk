@@ -8,10 +8,9 @@ The following document provides background information on the LWAYVE platform as
     * [How Does LWAYVE Work?](#how-does-lwayve-work)
   - [Section 2: Implementing the LWAYVE SDK in an Android Project](#section-2-implementing-the-lwayve-sdk-in-an-android-project)
     * [Prerequisites](#prerequisites)
-    * [Add the LWAYVE and ProxSee SDKs as Dependencies](#add-the-lwayve-and-proxsee-sdks-as-dependencies)
-    * [Initialize the LWAYVE and ProxSee SDKs](#initialize-the-lwayve-and-proxsee-sdks)
-    * [Enable Communication Between the LWAYVE and ProxSee SDKs](#enable-communication-between-the-lwayve-and-proxsee-sdks)
-    * [Handling Audio](#handling-audio)
+    * [Add the LWAYVE SDK (and optionally the ProxSee SDK) as Dependencies](#add-the-lwayve-sdk-and-optionally-the-proxsee-sdk-as-dependencies)
+    * [Initialize the LWAYVE SDK](#initialize-the-lwayve-sdk)
+    * [Add the LWAYVE Playback control to your app's UI](#add-the-lwayve-playback-control-to-your-apps-ui)
   - [Section 3: Reference Documentation](#section-3-reference-documentation)
     * [API](#api)
     * [Classes](#classes)
@@ -76,24 +75,22 @@ The following image depicts the high-level LWAYVE Contextual Audio Experience wo
  
  
 ## Section 2: Implementing the LWAYVE SDK in an Android Project
-Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple four-step process:
-1. Add the LWAYVE and ProxSee SDKs as Dependencies
-2. Initialize the LWAYVE and ProxSee SDKs
-3. Enable Communication Between the LWAYVE and ProxSee SDKs
-4. Handle Audio
+Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple three-step process:
+1. Add the LWAYVE SDK and ProxSee SDK add-on module as Dependencies
+2. Initialize the LWAYVE SDK
+3. Add the LWAYVE Playback control to your app's UI
  
 ### Prerequisites
 The instructions have been provided below with the following assumptions:
 - A Customer-specific environment has been provisioned
 - An Authorization token has been provided
-- A ProxSee API key has been provided
 - An Experience Designer has already created a Contextual Audio Experience and uploaded it for your environment. Alternatively, a Sample Lixar Experience has been loaded into your environment.
 - The corresponding audio files for the Contextual Audio Experience have been uploaded to the environment
 - If ProxSee services are being used, Location tags needed for the LWAYVE Contextual Audio Experience have been defined within the ProxSee environment.
  
  
-### Add the LWAYVE and ProxSee SDKs as Dependencies
-The first step in setting up LWAYVE is to add both the LWAYVE SDK and the ProxSee SDK as dependencies in your project's build.gradle file. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
+### Add the LWAYVE SDK (and optionally the ProxSee SDK) as Dependencies
+The first step in setting up LWAYVE is to add the LWAYVE SDK (and the ProxSee SDK add-on module if desired) as dependencies in your project's build.gradle file. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
  
 #### Add the LWAYVE SDK as a Dependency
 To include the LWAYVE SDK in your project, add the following line of code to the **dependencies** section of your **build.gradle**:
@@ -105,224 +102,91 @@ To include the LWAYVE SDK in your project, add the following line of code to the
 **Code**
  
 ```
- 
 compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
- 
 ```
  
-#### Add the ProxSee SDK as a Dependency
-To include the ProxSee SDK as a dependency in your project, add the following line of code to the **dependencies** section of your **build.gradle**.
+#### Add the ProxSee SDK as a Dependency (optional)
+To include the optional ProxSee SDK add-on module as a dependency in your project, add the following line of code to the **dependencies** section of your **build.gradle**.
  
 **Parameters**
  
-- {sdkVersion} - The latest version of ProxSee, which can be found at [http://search.maven.org/#search|ga|1|proxsee-sdk](http://search.maven.org/#search|ga|1|proxsee-sdk)
+- {sdkVersion} - The version used for the ProxSee SDK module should match the version of LWAYVE used in the step above.
  
 **Code**
  
 ```
- 
-compile 'io.proxsee.sdk:proxsee-sdk:{sdkVersion}'
- 
+compile 'com.lixar.lwayve:lwayve-proxsee:{sdkVersion}'
 ```
  
-### Initialize the LWAYVE and ProxSee SDKs
-The next step is to initialize both the LWAYVE SDK and the ProxSee SDK. 
- 
-#### Initialize the LWAYVE SDK
+### Initialize the LWAYVE SDK
 Add the following code to your Application class' initialization process (e.g., Application.onCreate()):
  
 **Parameters**
  
-- {lwayveAuthToken} - The authentication token for LWAYVE provided by Lixar. 
+- {authToken} - The authentication token for LWAYVE provided by Lixar. 
  
 **Code**
  
 ```
 LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
-                .setAuthenticationToken({lwayveAuthToken})
+                .setAuthenticationToken({authToken})
                 .build();
  
 try {
     LwayveSdk.init(this, configuration);
 } catch (InvalidSdkConfigurationException e) {
- 
-} catch (SdkNotInitializedException e) {
- 
-}
- 
+    // Error handling
+} 
 ```
 
 #### Configuration Options
-LWAYVE supports the following configuration options which can be set in the LwayveSdkConfiguration object passed to the SDK on initialization:
+There are several configuration parameters that can be set when initializing the LWAYVE SDK. These options are passed to the SDK during initialization through the LwayveSdkConfiguration object. An LwayveSdkConfiguration instance can be constructed with the LwayveSdkConfiguration.Builder class. The Builder supports the following methods:
 
-- {authToken} (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
-- {baseUrl} (optional) - Configures the url used to communicate with the LWAYVE backend.
-- {language} (optional) - Sets the language preferred language to use for audio clips.
-- {maxCacheAge} (optional) - Sets the length of time (in days) to keep audio files in the cache. Set to 0 to keep files indefinitely.
-- {maxCacheSize} (optional) - Sets the maximum amount of audio data to cache (in megabytes).
-- {notificationLargeIconRes} (optional) - Sets the drawable resource to use for the icon in the media player notification.
-- {notificationSmallIconRes} (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
+- setAuthenticationToken(String authToken) (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
+- setBaseUrl(String baseUrl) (optional) - Configures the url used to communicate with the LWAYVE backend.
+- setLanguage(LwayveSdkLanguage language) (optional) - Sets the preferred language to use for audio clips.
+- setNotificationLargeIconRes(int res) (optional) - Sets the drawable resource to use for the icon in the media player notification.
+- setNotificationSmallIconRes(int res) (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
+- setProxSeeSdkAdapterFactory(ProxSeeSdkAdapter.Factory factory) - Sets the ProxSeeSdkAdapter instance to use when initializing the LWAYVE SDK.
 
 See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html)
  section of the Javadoc for more details.
  
-##### Initialize the SDK asynchronously
-You can optionally initialize the LWAYVE SDK asynchonously on a background thread so that the SDK doesn't tie up the application's main UI thread on app start up. 
+#### Connect to the LWAYVE SDK
+Once the SDK has been initialized you can call the connect() method to obtain the SDK instance.
 
 **Code**
 
 ```
-LwayveSdk lwayveSdk;
-LwayveAsyncProvider provider = new LwayveAsyncProvider(this, configuration);
-provider.connect(new LwayveConnectionCallback() {
+LwayveSdk.connect(new LwayveConnectionCallback() {
     public void onConnected(LwayveSdk instance) {
         lwayveSdk = instance;
     }
 });
-
 ```
  
-#### Initialize the ProxSee SDK
-Add the following code to your Application class' initialization process (e.g., Application.onCreate()):
- 
-**Parameters**
- 
-[proxseeApikey} - The API key provided by Lixar.
- 
+#### Initializing the ProxSee SDK add-on module
+To enable the ProxSee SDK integration support in LWAYVE, ensure the optional ProxSee add-on dependency has been added to the application's build.gradle file. Next create and pass an instance of ProxSeeSdkAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
+  
 **Code**
  
 ```
+LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
+                .setAuthenticationToken({authToken})
+                .setProxSeeSdkAdapterFactory(new ProxSeeSdkAdapterFactory(context))
+                .build();
  
-ProxSeeSDKManager.initialize(app, {proxseeApiKey});
-ProxSeeSDKManager.getInstance().start();
+try {
+    LwayveSdk.init(this, configuration);
+} catch (InvalidSdkConfigurationException e) {
+    // Error handling
+} 
+```
+  
+### Add the LWAYVE Playback control to your app's UI
+In order to interact with the LWAYVE SDK you will need to add the playback control to your applications UI. If you wish to listen for playback events broadcast by the SDK, you may optionally set an OnPlaybackEventListener. First, add the control to your Activity's xml layout file:
  
 ```
- 
-### Enable Communication Between the LWAYVE and ProxSee SDKs
-Now that the LWAYVE SDK and ProxSee SDK have been added to your project and initialized, you need to ensure that they can communicate with each other. This is done by sending the LWAYVE Device ID to the ProxSee SDK as well as sending ProxSee locations to the LWAYVE SDK. Sending the LWAYVE Device ID to the ProxSee SDK is required to link the data captured by LWAYVE to the location tag data captured by the Proxsee SDK. Sending the ProxSee tag locations to the LWAYVE SDK (and creating a ProxSeeBroadcastReceiver) allows the LWAYVE SDK to listen for location tag changes.
- 
-#### Send LWAYVE Device ID to ProxSee SDK
-Add the following code to your Application class:
- 
- 
-```
- 
-private void setProxSeeMetadata() {
-    HashMap<String, Object> metadata = new HashMap<>();
-    metadata.put("lwayve_deviceid", lwayveSdk.getDeviceUUID());
- 
-    ProxSeeSDKManager.getInstance().updateMetadata(metadata, new ProxSeeSDKManager.CompletionHandler() {
-        @Override
-        public void onUpdateCompleted(boolean success, Exception e) {
-            if (!success) {
-                Log.e("CompletionHandler", "Error sending lwayve deviceid to proxsee");
-            }
-        }
-    });
-}
- 
-```
- 
-#### Send ProxSee Locations to LWAYVE SDK
-Add the following code to your Application class:
- 
-```
- 
-private final Set<String> currentTags = new HashSet<>();
-private LwayveSdk lwayveSdk;
-private TagReceiver tagReceiver = new TagReceiver();
- 
-@Override
-protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    ...
-    registerReceiver(tagReceiver, new IntentFilter(ProxSeeBroadcaster.TAGS_CHANGED_ACTION));
-    reloadExistingTags();
-}
- 
-@Override
-public void onDestroy() {
-    super.onDestroy();
-    ...
-    unregisterReceiver(tagReceiver);
-}
- 
-public class TagReceiver extends ProxSeeBroadcastReceiver {
- 
-    @Override
-    public void didChangeTagsSet(BeaconNotificationObject beaconNotificationObject) {
-    	Log.d("TagReceiver", "Tags Set Changed");
-	setCurrentTags(beaconNotificationObject);
-	findExpiredTags(beaconNotificationObject);
-	findNewTags(beaconNotificationObject);
-    }
-    
-}
- 
-private void setCurrentTags(BeaconNotificationObject beaconNotificationObject) {
-    currentTags.clear();
-    currentTags.addAll(beaconNotificationObject.getCurrentTagsChangedSet().getTags());
-}
- 
-private void findNewTags(BeaconNotificationObject bno) {
-    Set<String> newTags = new HashSet<>();
-    for (String tag : currentTags) {
-        if (!bno.getPreviousTagsChangedSet().getTags().contains(tag)) {
-            newTags.add(tag);
-        }
-    }
-    onTagsFound(newTags);
-}
- 
-private void onTagsFound(Set<String> tags) {
-    lwayveSdk.addLocations(tags);
-}
- 
-private void findExpiredTags(BeaconNotificationObject bno) {
-    Set<String> expiredTags = new HashSet<>();
-    for (String tag : bno.getPreviousTagsChangedSet().getTags()) {
-        if (!currentTags.contains(tag)) {
-            expiredTags.add(tag);
-        }
-    }
-    onTagsLost(expiredTags);
-}
- 
-private void onTagsLost(Set<String> tags) {
-    lwayveSdk.removeLocations(tags);
-}
-
-public void reloadExistingTags() {
-    List<ProxSeeBeacon> beacons = getProxSeeSDKComponent().proxSeeBeaconRepository().findAll(true, true);
-    Set<String> tags = new HashSet<>();
-    for (ProxSeeBeacon beacon : beacons) {
-        tags.addAll(Arrays.asList(beacon.getTags()));
-    }
-    onTagsFound(tags);
-}
-
-private ProxSeeSDKComponent getProxSeeSDKComponent() {
-    try {
-        Field proxSeeSDKComponent = ProxSeeSDKManager.class.getDeclaredField("proxSeeSDKComponent");
-        proxSeeSDKComponent.setAccessible(true);
-        return (ProxSeeSDKComponent) proxSeeSDKComponent.get(proxSeeSDKManager);
-    } catch (Exception e) {
-        throw new RuntimeException(e);
-    }
-}
- 
-```
- 
-### Handling Audio
-In order to interact with the LWAYVE SDK you'll need to add the playback control to your applications UI. If you wish to listen for playback events broadcast by the SDK, 
-you may optionally set an OnPlaybackEventListener.
-
-#### Implementing the LWAYVE playback control in your application's UI.
-
-Add the control to your Activity's xml layout file:
- 
-```
- 
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:orientation="vertical"
@@ -336,32 +200,26 @@ Add the control to your Activity's xml layout file:
 			android:layout_gravity="center_horizontal"/>
         
 </FrameLayout>
- 
 ```
-Add the following code to the Activity hosting the playback control:
+Next, add the following code to the Activity hosting the playback control:
  
 ```
 public class MainActivity extends Activity {
  
-    private LwayveSdk lwayveSdk;
     private LwayvePlaybackControlView lwayvePlaybackControlView;
  
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
- 
-	try {
-            lwayveSdk = LwayveSdk.getInstance();
-        } catch (SdkNotInitializedException e) {
-            throw new RuntimeException("Lwayve SDK not initialized aborting");
-        }
-        
+         
         lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
+        
+        // Add a PlabackEventListener to listen for PlaybackEvents broadcast by the SDK (optional)
         lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
             @Override
             public void onPlaybackEvent(PlaybackEventType eventType) {
-                updateDebugInfo();
+                // Playback events can be received here to add custom handling in your app's UI
             }
         });
     }
@@ -377,50 +235,6 @@ public class MainActivity extends Activity {
         lwayvePlaybackControlView.disconnectFromMediaBrowser();
     }
 }
- 
-```
-
-##### Receive Playback Commands from the LWAYVE SDK
- 
-If you wish to receive a callback when playback events occur in your application, you can register an OnPlaybackEventListener callback through the playback control:
- 
-```
-private PlaybackEventReceiver playbackEventReceiver;
- 
-@Override
-protected void onCreate(@Nullable Bundle savedInstanceState) {
-    ...
- 
-    playbackEventReceiver = new PlaybackEventReceiver();
-    lwayvePlaybackControlView.setOnPlaybackEventListener(playbackEventReceiver);
-}
- 
-private class PlaybackEventReceiver implements OnPlaybackEventListener {
- 
-    @Override
-    public void onPlaybackEvent(PlaybackEvent eventType) {
-        int index = lwayveSdk.getCurrentPlaylistItemIndex();
-        switch (eventType) {
-            case PREPARED_EVENT:
-                // do something
-                break;
-            case NOT_PREPARED_EVENT:
-                // do something
-                break;
-            case END_OF_PLAYLIST_EVENT:
-                // do something
-                break;
-            case STOP_EVENT:
-            case PAUSE_EVENT:
-                isPlaying = false;
-                break;
-            case PLAY_EVENT:
-                isPlaying = true;
-                break;
-        }
-    }
-}
- 
 ```
  
 ## Section 3: Reference Documentation
