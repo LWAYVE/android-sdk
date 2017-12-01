@@ -38,8 +38,6 @@ import timber.log.Timber;
 import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_AUTH_TOKEN;
 import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_BASE_URL;
 import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_LANGUAGE;
-import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_MAX_CACHE_AGE;
-import static com.lixar.lwayve.sampleapp.SampleApplication.PREFS_KEY_MAX_CACHE_SIZE;
 import static com.lixar.lwayve.sdk.events.EventHelper.PLAYBACK_AUDIO_EVENT_ACTION;
 
 /**
@@ -82,14 +80,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
 
             if (TextUtils.equals(key, PREFS_KEY_AUTH_TOKEN) && TextUtils.isEmpty(stringValue)) {
-                return false;
-            }
-
-            if (TextUtils.equals(key, PREFS_KEY_MAX_CACHE_AGE) && TextUtils.isEmpty(stringValue)) {
-                return false;
-            }
-
-            if (TextUtils.equals(key, PREFS_KEY_MAX_CACHE_SIZE) && TextUtils.isEmpty(stringValue)) {
                 return false;
             }
 
@@ -152,6 +142,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         if (actionBar != null) {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.settings_menu_title);
         }
     }
 
@@ -195,14 +186,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lwayveConfigUpdated = true;
         }
 
-        if (isMaxCacheAgeChanged(lwayveConfig)) {
-            lwayveConfigUpdated = true;
-        }
-
-        if (isMaxCacheSizeChanged(lwayveConfig)) {
-            lwayveConfigUpdated = true;
-        }
-
         return lwayveConfigUpdated;
     }
 
@@ -225,14 +208,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         if (isLanguageChanged(lwayveConfig)) {
             newConfigBuilder.setLanguage(LanguageManager.getLanguageForString(getSavedLanguage()));
-        }
-
-        if (isMaxCacheAgeChanged(lwayveConfig)) {
-            newConfigBuilder.setMaxCacheAge(Integer.parseInt(getSavedMaxCacheAge()));
-        }
-
-        if (isMaxCacheSizeChanged(lwayveConfig)) {
-            newConfigBuilder.setMaxCacheSize(Long.parseLong(getSavedMaxCacheSize()));
         }
 
         PlaybackEventsBroadcastReceiver playbackEventsReceiver = new PlaybackEventsBroadcastReceiver();
@@ -272,24 +247,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @NonNull
     private String getSavedLanguage() {
         return prefs.getString(PREFS_KEY_LANGUAGE, "");
-    }
-
-    private boolean isMaxCacheAgeChanged(LwayveSdkConfiguration lwayveConfig) {
-        return !TextUtils.equals(getSavedMaxCacheAge(), String.valueOf(lwayveConfig.getMaxCacheAge()));
-    }
-
-    @NonNull
-    private String getSavedMaxCacheAge() {
-        return prefs.getString(PREFS_KEY_MAX_CACHE_AGE, "");
-    }
-
-    private boolean isMaxCacheSizeChanged(LwayveSdkConfiguration lwayveConfig) {
-        return !TextUtils.equals(getSavedMaxCacheSize(), String.valueOf(lwayveConfig.getMaxCacheSize()));
-    }
-
-    @NonNull
-    private String getSavedMaxCacheSize() {
-        return prefs.getString(PREFS_KEY_MAX_CACHE_SIZE, "");
     }
 
     @Override
@@ -349,8 +306,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(PREFS_KEY_BASE_URL));
             bindPreferenceSummaryToValue(findPreference(PREFS_KEY_AUTH_TOKEN));
             bindPreferenceSummaryToValue(findPreference(PREFS_KEY_LANGUAGE));
-            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_MAX_CACHE_AGE));
-            bindPreferenceSummaryToValue(findPreference(PREFS_KEY_MAX_CACHE_SIZE));
         }
 
         @Override

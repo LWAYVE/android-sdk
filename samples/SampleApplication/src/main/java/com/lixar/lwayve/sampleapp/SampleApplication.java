@@ -19,11 +19,6 @@ public class SampleApplication extends Application {
     public static final String PREFS_KEY_AUTH_TOKEN = "sdk_auth_token";
     public static final String PREFS_KEY_BASE_URL = "sdk_base_url";
     public static final String PREFS_KEY_LANGUAGE = "sdk_language_preference";
-    public static final String PREFS_KEY_MAX_CACHE_AGE = "sdk_cache_max_age";
-    public static final String PREFS_KEY_MAX_CACHE_SIZE = "sdk_cache_size";
-
-    private static final long DEFAULT_MAX_CACHE_SIZE = 0;
-    private static final int DEFAULT_MAX_CACHE_AGE = 0;
 
     @Override
     public void onCreate() {
@@ -61,18 +56,10 @@ public class SampleApplication extends Application {
         String language = prefs.getString(PREFS_KEY_LANGUAGE, LanguageManager.getDeviceDefaultLanguage().getLanguage());
         prefs.edit().putString(PREFS_KEY_LANGUAGE, language).apply();
 
-        String maxCacheAge = prefs.getString(PREFS_KEY_MAX_CACHE_AGE, String.valueOf(DEFAULT_MAX_CACHE_AGE));
-        prefs.edit().putString(PREFS_KEY_MAX_CACHE_AGE, maxCacheAge).apply();
-
-        String maxCacheSize = prefs.getString(PREFS_KEY_MAX_CACHE_SIZE, String.valueOf(DEFAULT_MAX_CACHE_SIZE));
-        prefs.edit().putString(PREFS_KEY_MAX_CACHE_SIZE, maxCacheSize).apply();
-
         return new LwayveSdkConfiguration.Builder()
                 .setAuthenticationToken(authToken)
                 .setBaseUrl(baseUrl)
                 .setLanguage(LanguageManager.getLanguageForString(language))
-                .setMaxCacheAge(Integer.parseInt(maxCacheAge))
-                .setMaxCacheSize(Integer.parseInt(maxCacheSize))
                 .setProxSeeSdkAdapterFactory(new ProxSeeSdkAdapterFactory(this))
                 .build();
     }

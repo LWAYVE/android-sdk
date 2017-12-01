@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.events.OnPlaybackEventListener;
-import com.lixar.lwayve.sdk.exceptions.SdkNotInitializedException;
 import com.lixar.lwayve.sdk.events.PlaybackEvent;
 import com.lixar.lwayve.sdk.view.LwayvePlaybackControlView;
 
@@ -41,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private LwayveSdk lwayveSdk;
     private EditText locationsInput;
     private EditText userLikesInput;
-    private final Set<String> locations = new HashSet<>();
-    private final Set<String> userLikes = new HashSet<>();
     private LwayvePlaybackControlView lwayvePlaybackControls;
 
     private static void startActivity(Context context) {
@@ -147,47 +144,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateLocations() {
+        Set<String> locations = new HashSet<>();
+
         String input = locationsInput.getText().toString();
         if (!TextUtils.isEmpty(input)) {
             Set<String> newLocations = extractTags(input);
-
-            Set<String> toRemove = new HashSet<>(locations);
-            toRemove.removeAll(newLocations);
-
-            Set<String> toAdd = new HashSet<>(newLocations);
-            toAdd.removeAll(locations);
-
-            lwayveSdk.removeUserLocations(toRemove);
-            lwayveSdk.addUserLocations(toAdd);
-
-            locations.removeAll(toRemove);
-            locations.addAll(toAdd);
-        } else {
-            lwayveSdk.removeUserLocations(locations);
-            locations.clear();
+            locations.addAll(newLocations);
         }
+
+        lwayveSdk.setUserLocations(locations);
     }
 
     private void updateUserLikes() {
+        Set<String> userLikes = new HashSet<>();
+
         String input = userLikesInput.getText().toString();
         if (!TextUtils.isEmpty(input)) {
             Set<String> newLikes = extractTags(input);
-
-            Set<String> toRemove = new HashSet<>(userLikes);
-            toRemove.removeAll(newLikes);
-
-            Set<String> toAdd = new HashSet<>(newLikes);
-            toAdd.removeAll(userLikes);
-
-            lwayveSdk.removeUserLikes(toRemove);
-            lwayveSdk.addUserLikes(toAdd);
-
-            userLikes.removeAll(toRemove);
-            userLikes.addAll(toAdd);
-        } else {
-            lwayveSdk.removeUserLikes(userLikes);
-            userLikes.clear();
+            userLikes.addAll(newLikes);
         }
+
+        lwayveSdk.setUserLikes(userLikes);
     }
 
     @NonNull
