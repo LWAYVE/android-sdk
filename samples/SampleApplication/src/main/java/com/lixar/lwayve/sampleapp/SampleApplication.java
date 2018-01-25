@@ -10,6 +10,7 @@ import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.core.LwayveSdkConfiguration;
 import com.lixar.lwayve.sdk.exceptions.InvalidSdkConfigurationException;
+import com.lixar.lwayve.sdk.recorder.RecorderAdapterFactory;
 import com.lixar.lwayve.sdk.utils.LanguageManager;
 
 import timber.log.Timber;
@@ -61,6 +62,7 @@ public class SampleApplication extends Application {
                 .setBaseUrl(baseUrl)
                 .setLanguage(LanguageManager.getLanguageForString(language))
                 .setProxSeeSdkAdapterFactory(new ProxSeeSdkAdapterFactory(this))
+                .setRecorderAdapterFactory(new RecorderAdapterFactory())
                 .build();
     }
 
