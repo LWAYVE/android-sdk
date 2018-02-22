@@ -3,20 +3,25 @@ The following document provides background information on the LWAYVE platform as
  
   - [Section 1: Introducing LWAYVE and Contextual Audio](#section-1-introducing-lwayve-and-contextual-audio)
     * [Background](#background)
-    * [Who are the Players?](#who-are-the-players)
-    * [What are the Components of the LWAYVE Environment?](#what-are-the-components-of-the-lwayve-environment)
-    * [How Does LWAYVE Work?](#how-does-lwayve-work)
+    * [Who are the Players?](#who-are-the-players-)
+    * [What are the Components of the LWAYVE Environment?](#what-are-the-components-of-the-lwayve-environment-)
+    * [How Does LWAYVE Work?](#how-does-lwayve-work-)
   - [Section 2: Implementing the LWAYVE SDK in an Android Project](#section-2-implementing-the-lwayve-sdk-in-an-android-project)
     * [Prerequisites](#prerequisites)
-    * [Add the LWAYVE SDK (and optionally the ProxSee SDK) as Dependencies](#add-the-lwayve-sdk-and-optionally-the-proxsee-sdk-as-dependencies)
-    * [Initialize the LWAYVE SDK](#initialize-the-lwayve-sdk)
-    * [Add the LWAYVE Playback control to your app's UI](#add-the-lwayve-playback-control-to-your-apps-ui)
-  - [Section 3: Reference Documentation](#section-3-reference-documentation)
+    * [1. Adding the LWAYVE SDK (and optional add-on modules) as Dependencies](#1-adding-the-lwayve-sdk-and-optional-add-on-modules-as-dependencies)
+    * [2. Initializing the LWAYVE SDK](#2-initializing-the-lwayve-sdk)
+    * [3. Integrating the LWAYVE Playback Control into an Application](#3-integrating-the-lwayve-playback-control-into-an-application)
+  - [Section 3: Customization and Configuration](#section-3-customization-and-configuration)
+    * [SDK Initialization Options](#sdk-initialization-options)
+    * [Recorder Module Initialization Options](#recorder-module-initialization-options)
+    * [Supplementary Actions](#supplementary-actions)
+    * [Colours](#colours)    
+  - [Section 4: Reference Documentation](#section-4-reference-documentation)
     * [API](#api)
     * [Classes](#classes)
  
  
-## Section 1: Introducing LWAYVE and Contextual Audio
+## Section 1: Introducing LWAYVE and Contextual Audio	
  
 ### Background
 LWAYVE is an audio platform that provides event attendees with Contextual Audio Experiences and can be embedded to augment any mobile application. A Contextual Audio Experience serves as a personalized audio guide making any event as engaging, easy, and enjoyable as possible. 
@@ -75,10 +80,10 @@ The following image depicts the high-level LWAYVE Contextual Audio Experience wo
  
  
 ## Section 2: Implementing the LWAYVE SDK in an Android Project
-Incorporating the LWAYVE and ProxSee SDKs in your Android project is a simple three-step process:
-1. Add the LWAYVE SDK and ProxSee SDK add-on module as Dependencies
+Incorporating the LWAYVE and ProxSee SDKs in your Android project is typically a three-step process:
+1. Add the LWAYVE SDK and any add-on modules as Dependencies
 2. Initialize the LWAYVE SDK
-3. Add the LWAYVE Playback control to your app's UI
+3. Add the LWAYVE Playback Control to your app's UI
  
 ### Prerequisites
 The instructions have been provided below with the following assumptions:
@@ -87,12 +92,21 @@ The instructions have been provided below with the following assumptions:
 - An Experience Designer has already created a Contextual Audio Experience and uploaded it for your environment. Alternatively, a Sample Lixar Experience has been loaded into your environment.
 - The corresponding audio files for the Contextual Audio Experience have been uploaded to the environment
 - If ProxSee services are being used, Location tags needed for the LWAYVE Contextual Audio Experience have been defined within the ProxSee environment.
+- The application into which LWAYVE will be integrated is using the [Gradle](https://gradle.org/) build system.
+
+#### Supported Android Versions
+The LWAYVE SDK is compatible with Android API 16 and later. The ProxSee add-on module requires API 18 or later for BLE support (it can be loaded on 16+ but Bluetooth scanning will be unavailable).
+
+#### Android Plugin for Gradle
+The LWAYVE SDK requires version 3.0.0 or later of the Android Plugin for Gradle. Earlier versions may show an error message if you choose to include the ProxSee add-on module in your project.
+
+#### Android Studio Instant Run
+The instant run feature of Android Studio should be disabled when building an app using the LWAYVE SDK as it can lead to unusual behaviour when running the app. This feature can be turned off in Android Studio by going to Preferences -> Build, Execution, Deployment -> Instant Run and disabling the option "Enable Instant Run to hot swap code/resource changes on deploy (default enabled)"
  
+### 1. Adding the LWAYVE SDK (and optional add-on modules) as Dependencies
+The first step in setting up LWAYVE is to add the LWAYVE SDK (and the ProxSee SDK add-on module if desired) as dependencies in your project's build.gradle. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
  
-### Add the LWAYVE SDK (and optionally the ProxSee SDK) as Dependencies
-The first step in setting up LWAYVE is to add the LWAYVE SDK (and the ProxSee SDK add-on module if desired) as dependencies in your project's build.gradle file. The LWAYVE SDK handles the time, location, and audio of the Contextual Audio Experience. The ProxSee SDK passes the location tags to the LWAYVE SDK so that the LWAYVE SDK can complete the location aspect of the Contextual Audio Experience.
- 
-#### Add the LWAYVE SDK as a Dependency
+#### LWAYVE SDK
 To include the LWAYVE SDK in your project, add the following line of code to the **dependencies** section of your **build.gradle**:
  
 **Parameters**
@@ -105,25 +119,30 @@ To include the LWAYVE SDK in your project, add the following line of code to the
 compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
 ```
  
-#### Add the ProxSee SDK as a Dependency (optional)
-To include the optional ProxSee SDK add-on module as a dependency in your project, add the following line of code to the **dependencies** section of your **build.gradle**.
- 
-**Parameters**
- 
-- {sdkVersion} - The version used for the ProxSee SDK module should match the version of LWAYVE used in the step above.
- 
+#### ProxSee SDK Module (optional)
+To include the optional ProxSee SDK add-on module as a dependency in your project, add the following line to the **dependencies** section of your **build.gradle**.
+
 **Code**
  
 ```
 compile 'com.lixar.lwayve:lwayve-proxsee:{sdkVersion}'
 ```
+
+#### Recorder Module (optional)
+To include the optional audio recorder add-on module as a dependency in your project, add the following line to the **dependencies** section of your **build.gradle**.
+
+**Code**
  
-### Initialize the LWAYVE SDK
+```
+compile 'com.lixar.lwayve:lwayve-recorder:{sdkVersion}'
+```
+ 
+### 2. Initializing the LWAYVE SDK
 Add the following code to your Application class' initialization process (e.g., Application.onCreate()):
  
 **Parameters**
  
-- {authToken} - The authentication token for LWAYVE provided by Lixar. 
+- {authToken} - The LWAYVE authentication token provided by Lixar. 
  
 **Code**
  
@@ -139,20 +158,7 @@ try {
 } 
 ```
 
-#### Configuration Options
-There are several configuration parameters that can be set when initializing the LWAYVE SDK. These options are passed to the SDK during initialization through the LwayveSdkConfiguration object. An LwayveSdkConfiguration instance can be constructed with the LwayveSdkConfiguration.Builder class. The Builder supports the following methods:
-
-- setAuthenticationToken(String authToken) (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
-- setBaseUrl(String baseUrl) (optional) - Configures the url used to communicate with the LWAYVE backend.
-- setLanguage(LwayveSdkLanguage language) (optional) - Sets the preferred language to use for audio clips.
-- setNotificationLargeIconRes(int res) (optional) - Sets the drawable resource to use for the icon in the media player notification.
-- setNotificationSmallIconRes(int res) (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
-- setProxSeeSdkAdapterFactory(ProxSeeSdkAdapter.Factory factory) - Sets the ProxSeeSdkAdapter instance to use when initializing the LWAYVE SDK.
-
-See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html)
- section of the Javadoc for more details.
- 
-#### Connect to the LWAYVE SDK
+#### Connecting to the LWAYVE SDK
 Once the SDK has been initialized you can call the connect() method to obtain the SDK instance.
 
 **Code**
@@ -165,8 +171,8 @@ LwayveSdk.connect(new LwayveConnectionCallback() {
 });
 ```
  
-#### Initializing the ProxSee SDK add-on module
-To enable the ProxSee SDK integration support in LWAYVE, ensure the optional ProxSee add-on dependency has been added to the application's build.gradle file. Next create and pass an instance of ProxSeeSdkAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
+#### Initializing the ProxSee SDK Add-on Module
+To enable the ProxSee SDK integration support in LWAYVE, ensure the optional ProxSee add-on dependency has been added to the application's build.gradle. Next create and pass an instance of ProxSeeSdkAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
   
 **Code**
  
@@ -182,9 +188,33 @@ try {
     // Error handling
 } 
 ```
+
+#### Initializing the Audio Recorder Add-on Module
+To enable the audio recording integration support in LWAYVE, ensure the optional recorder add-on dependency has been added to the application's build.gradle. Next create and pass an instance of RecorderAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
   
-### Add the LWAYVE Playback control to your app's UI
-In order to interact with the LWAYVE SDK you will need to add the playback control to your applications UI. If you wish to listen for playback events broadcast by the SDK, you may optionally set an OnPlaybackEventListener. First, add the control to your Activity's xml layout file:
+**Code**
+ 
+```
+LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
+                .setAuthenticationToken({authToken})
+                .setRecorderdapterFactory(new RecorderAdapterFactory())
+                .build();
+ 
+try {
+    LwayveSdk.init(this, configuration);
+} catch (InvalidSdkConfigurationException e) {
+    // Error handling
+} 
+```
+  
+### 3. Integrating LWAYVE into an Application
+
+#### Standard Implementation (Using LWAYVE Playback Control)
+In order to interact with the LWAYVE SDK a prebuilt playback control is provided which you may integrate into an application's UI as a custom view.
+
+A complete sample app using the prebuilt control can be found here: [Prebuilt Control Sample](https://github.com/LWAYVE/android-sdk/blob/master/samples/PrebuiltControlSample/src/main/java/com/lixar/lwayve/prebuiltcontrolsample)
+
+First, add the control to your Activity's xml layout file:
  
 ```
 <?xml version="1.0" encoding="utf-8"?>
@@ -201,7 +231,7 @@ In order to interact with the LWAYVE SDK you will need to add the playback contr
         
 </FrameLayout>
 ```
-Next, add the following code to the Activity hosting the playback control:
+Next, add the following code to your Activity to initialize the control:
  
 ```
 public class MainActivity extends Activity {
@@ -211,17 +241,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        ...
          
         lwayvePlaybackControls = (LwayvePlaybackControlView) findViewById(R.id.lwayve_playback_controls);
         
-        // Add a PlabackEventListener to listen for PlaybackEvents broadcast by the SDK (optional)
-        lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
-            @Override
-            public void onPlaybackEvent(PlaybackEventType eventType) {
-                // Playback events can be received here to add custom handling in your app's UI
-            }
-        });
+        ...
     }
     
     @Override
@@ -236,8 +260,120 @@ public class MainActivity extends Activity {
     }
 }
 ```
+Playback events emitted by the SDK can be received by adding an OnPlaybackEventListener (optional):
+
+```
+@Override
+protected void onCreate(@Nullable Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	...
+    	
+	lwayvePlaybackControls.setOnPlaybackEventListener(new LwayvePlaybackControlView.OnPlaybackEventListener() {
+		@Override
+		public void onPlaybackEvent(PlaybackEvent event) {
+			// Playback events can be received here to add custom handling in your app's UI
+		}
+	});
+
+	...
+}
+
+```
+
+#### Custom Implementation
+It is also possible for an app to implement it's own custom controls for interacting with the LWAYVE SDK if the prebuilt control is not satisfactory.
+
+A complete sample app demonstrating how to interact with the SDK without the prebuilt control can be found here: [Custom Control Sample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample)
+
+When opting not to use the prebuilt control playback events from the SDK can be received by registering a broadcast receiver:
+
+```
+private void registerPlaybackEventsReceiver() {
+    IntentFilter filter = new IntentFilter(EventHelper.PLAYBACK_AUDIO_EVENT_ACTION);
+    playbackEventsReceiver = new PlaybackEventsReceiver();
+    LocalBroadcastManager.getInstance(this).registerReceiver(playbackEventsReceiver, filter);
+}
+
+private class PlaybackEventsReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        PlaybackEvent event = (PlaybackEvent) intent.getExtras().get(EventHelper.PLAYBACK_AUDIO_EVENT_TYPE_KEY);
+        Log.i(TAG, "got: " + event.name() + " event");
+    }
+}
+```
+
+Connecting to the media browser through the lwayveSdk instance:
+
+```
+public void onResume() {
+	lwayveSdk.connectToMediaBrowser(activity, new MediaBrowserConnectionCallback() {
+        public void onConnected() {
+            // Once connected, playback commands such as lwayveSdk.play() or lwayveSdk.skipNext() 
+            // can be sent to the SDK.
+        }
+	});
+}
+```
+
+## Section 3: Customization and Configuration
+
+### SDK Initialization Options
+
+There are several configuration parameters that can be set when initializing the LWAYVE SDK. These options are passed to the SDK during initialization through the LwayveSdkConfiguration object. An LwayveSdkConfiguration instance can be constructed with the LwayveSdkConfiguration.Builder class. The Builder supports the following methods:
+
+- setAuthenticationToken(String authToken) (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
+- setBaseUrl(String baseUrl) (optional) - Configures the url used to communicate with the LWAYVE backend.
+- setEventName(String name) (optional) - When set this will replace "LWAYVE" with the name of your choice for certain string resources used in the SDK. 
+- setLanguage(ExperienceLanguage language) (optional) - Sets the preferred language to use for audio clips.
+- setNotificationLargeIconRes(int res) (optional) - Sets the drawable resource to use for the icon in the media player notification.
+- setNotificationSmallIconRes(int res) (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
+- setProxSeeSdkAdapterFactory(ProxSeeSdkAdapter.Factory factory) - Sets the ProxSeeSdkAdapter instance to use when initializing the LWAYVE SDK.
+- setRecorderAdapterFactory(RecorderAdapter.Factory factory) - Sets the RecorderAdapter instance to use when initializing the LWAYVE SDK.
+
+See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html) section of the Javadoc for more details.
+
+### Recorder Module Initialization Options
+
+By default the LWAYVE SDK recorder module is configured to allow recording of up to sixty seconds of audio. You can reduce this limit to thirty seconds by passing the following option when creating the factory instance:
+```
+.setRecorderAdapterFactory(new RecorderAdapterFactory(RecordingDuration.THIRTY_SECONDS));
+```
  
-## Section 3: Reference Documentation
+### Supplementary Actions
+
+LWAYVE provides a set of customizable supplementary actions which can be enabled for any audio clip in an experience. There are five customizable actions provided: Tickets, Map, Link, Share and Hotel. Actions are enabled for a given audio clip based on whether a value has been defined for that action in the experience retrieved from the backend. The Tickets, Map, Link and Hotel actions all are url based actions meaning you may provide a valid url which will opened typically by the device's web browser. The Share action accepts a String and will open the device sharing dialog allowing the user to share the message of your choosing on their socail media accounts. 
+
+#### Customizing the appearance of supplementary actions in the LWAYVE Playback Control
+
+The supplementary actions for the current audio clip can be accessed from the Outer Band in the LWAYVE Playback Control. The Outer Band can be opened by long pressing or by swiping down on the play button. The default icons and text resources used in the Outer Band can be overridden if desired. The overridden values will apply for all audio clips in the experience. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html) for further information.
+
+#### Record Action
+
+A sixth action will appear in the Outer Band when recording functionality is enabled in the SDK. The function performed by this action cannot be customized and will always open the prebuilt recording UI. When recording is enabled the action will be enabled for all audio clips in the experience. If you wish to use the recording feature but would prefer to not include the record action in the Outer Band, you may disable this action from being added using the [LwayvePlaybackControlView.setShowRecordInOuterBand()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/view/LwayvePlaybackControlView.html#setShowRecordInOuterBand(boolean)) method.
+
+#### Executing actions independent of the LWAYVE Playback Control
+
+Supplementary actions for the current audio clip can be executed independent of the LWAYVE Playback Control by calling [LwayveSdk.getOuterBandActions()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#getOuterBandActions()) and [LwayveSdk.executeOuterBandAction(OuterBandAction)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#executeOuterBandAction(OuterBandAction)) methods. (Check out the [CustomControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample/MainActivity.java) project for a complete example of implementing custom playback controls for LWAYVE.)
+
+### Colours
+
+#### Default Highlight Colour
+The SDK supports customizing various colours used by the LWAYVE Playback Control and Audio Recording UI. In addition to allowing the colours to be configured independently, you can also override the default highlight colour which will change the default orange highlight colour used throughout the SDK to the colour of your choosing. To override the default highlight colour, override the colour resource default_highlight_color in your application's colors.xml.
+
+```
+<color tools:override="true" name="default_highlight_color">{colorValue}</color>
+```
+
+#### LWAYVE Playback Control
+The LWAYVE Playback Control supports overriding the colours used for the play button, Outer Band icons and text, recording UI as well as the opacity of the play control itself. These options can be set either programmatically or on the LwayvePlaybackControlView in an xml layout. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/view/LwayvePlaybackControlView.html) for the complete list of features which can be customized.
+
+#### Audio Recording Window
+The colours for the audio recording window can be configured through the [LwayvePlaybackControlView](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/view/LwayvePlaybackControlView.html) if using the LWAYVE Playback Control.
+
+The audio recording window can be launched independent of the LWAYVE Playback Control (provided the recording module is properly initialized.) This can be done by calling [LwayveSdk.startRecordActivity(Context, Bundle)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)). Colours can also be customized through the Bundle object passed to this method. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)) for further information.
+ 
+## Section 4: Reference Documentation
  
 ### API
 You can test LWAYVE by using the API documented on Swagger. You can access Swagger through the following URL: [https://gateway.lwayve.com/swagger-ui/index.html](https://gateway.lwayve.com/swagger-ui/index.html)

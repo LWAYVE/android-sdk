@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="activity"
+            type="com.lixar.lwayve.customcontrolsample.MainActivity" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/activity_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            tools:context="com.lixar.lwayve.customcontrolsample.MainActivity">
+
+            <EditText
+                android:id="@+id/locations_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:inputType="text"
+                android:hint="@string/locations"/>
+
+            <EditText
+                android:id="@+id/user_likes_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/locations_input"
+                android:inputType="text"
+                android:hint="@string/user_likes"/>
+
+            <LinearLayout
+                android:id="@+id/buttons_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_likes_input"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/play_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/play"
+                    android:onClick="@{() -> activity.onPlayClicked()}"/>
+
+                <Button
+                    android:id="@+id/pause_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/pause"
+                    android:onClick="@{() -> activity.onPauseClicked()}" />
+
+                <Button
+                    android:id="@+id/clear_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/clear"
+                    android:onClick="@{() -> activity.onClearClicked()}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/buttons_holder2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buttons_holder"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/prev_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/rewind"
+                    android:onClick="@{() -> activity.onPrevClicked()}" />
+
+                <Button
+                    android:id="@+id/next_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/next"
+                    android:onClick="@{() -> activity.onNextClicked()}" />
+
+                <Button
+                    android:id="@+id/refresh_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/refresh"
+                    android:onClick="@{() -> activity.onRefreshClicked()}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_clip_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buttons_holder2"
+                android:text="@string/clip_actions"/>
+
+            <LinearLayout
+                android:id="@+id/buttons_holder3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_clip_actions"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/url_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/link_action"
+                    android:onClick="@{() -> activity.onUrlClicked()}"/>
+
+                <Button
+                    android:id="@+id/map_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/map_action"
+                    android:onClick="@{() -> activity.onMapClicked()}" />
+
+                <Button
+                    android:id="@+id/ticket_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/ticket_action"
+                    android:onClick="@{() -> activity.onTicketsClicked()}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/buttons_holder4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buttons_holder3"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/share_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/share_action"
+                    android:onClick="@{() -> activity.onShareClicked()}"/>
+
+                <Button
+                    android:id="@+id/hotel_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="@string/hotel_action"
+                    android:onClick="@{() -> activity.onHotelClicked()}" />
+
+                <Button
+                    android:id="@+id/record_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/record_action"
+                    android:onClick="@{() -> activity.onRecordClicked()}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/debug_info_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buttons_holder4"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</layout>

@@ -1,0 +1,29 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:inputType="text"
+        android:key="sdk_base_url"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_base_url" />
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:inputType="text"
+        android:key="sdk_auth_token"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_auth_key" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_language_default_value"
+        android:entries="@array/pref_languages"
+        android:entryValues="@array/pref_languages_values"
+        android:key="sdk_language_preference"
+        android:title="@string/pref_title_languages" />
+
+
+</PreferenceScreen>
