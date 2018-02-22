@@ -10,7 +10,7 @@ The following document provides background information on the LWAYVE platform as
     * [Prerequisites](#prerequisites)
     * [1. Adding the LWAYVE SDK (and optional add-on modules) as Dependencies](#1-adding-the-lwayve-sdk-and-optional-add-on-modules-as-dependencies)
     * [2. Initializing the LWAYVE SDK](#2-initializing-the-lwayve-sdk)
-    * [3. Integrating the LWAYVE Playback Control into an Application](#3-integrating-the-lwayve-playback-control-into-an-application)
+    * [3. Integrating LWAYVE into an Application](#3-integrating-lwayve-into-an-application)
   - [Section 3: Customization and Configuration](#section-3-customization-and-configuration)
     * [SDK Initialization Options](#sdk-initialization-options)
     * [Recorder Module Initialization Options](#recorder-module-initialization-options)
