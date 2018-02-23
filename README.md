@@ -120,21 +120,35 @@ compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
 ```
  
 #### ProxSee SDK Module (optional)
-To include the optional ProxSee SDK add-on module as a dependency in your project, add the following line to the **dependencies** section of your **build.gradle**.
+To include the optional ProxSee SDK add-on module as a dependency in your project, add the lwayve-proxsee module to the **dependencies** section of the app's **build.gradle**.
 
 **Code**
  
 ```
-compile 'com.lixar.lwayve:lwayve-proxsee:{sdkVersion}'
+dependencies {
+    compile 'com.lixar.lwayve:lwayve-proxsee:{sdkVersion}'
+}
 ```
 
 #### Recorder Module (optional)
-To include the optional audio recorder add-on module as a dependency in your project, add the following line to the **dependencies** section of your **build.gradle**.
+To include the optional audio recorder add-on module as a dependency in your project, add the lwayve-recorder module to the **dependencies** section of your **build.gradle**. 
 
 **Code**
  
 ```
-compile 'com.lixar.lwayve:lwayve-recorder:{sdkVersion}'
+dependencies {
+    compile 'com.lixar.lwayve:lwayve-recorder:{sdkVersion}'
+}
+```
+
+The recorder module has dependencies on some modules which are not available through Maven Central. The Jitpack.io repository to your will need to be added's to your app's **build.gradle** if it is not already present.
+
+**Code**
+ 
+```
+repositories {
+    maven { url "https://jitpack.io" }
+}
 ```
  
 ### 2. Initializing the LWAYVE SDK
