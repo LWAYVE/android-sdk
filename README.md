@@ -141,7 +141,7 @@ dependencies {
 }
 ```
 
-The recorder module has dependencies on some modules which are not available through Maven Central. The Jitpack.io repository to your will need to be added's to your app's **build.gradle** if it is not already present.
+The recorder module has dependencies on some modules which are not available through Maven Central. The Jitpack.io repository will need to be added to your app's **build.gradle** if it is not already present.
 
 **Code**
  
