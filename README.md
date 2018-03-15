@@ -330,6 +330,68 @@ public void onResume() {
 }
 ```
 
+#### Handling Multiple Firebase Instances
+If the host app or another library within the app is also using Firebase for push messages and loads it's configuration through the google-services.json file you will need to add the following lines to your manifest to prevent the FirebaseInitProvider from being removed from the final merged AndroidManifest.xml at build time.
+
+```
+<provider
+	android:name="com.google.firebase.provider.FirebaseInitProvider"
+	android:authorities="${applicationId}.firebaseinitprovider"
+	android:exported="false"
+	tools:node="replace" />
+
+```
+
+If the host application or another library within the application receives push messages through a Service which extends FirebaseMessagingService Android will only deliver push messages to one of the Services (whichever Service appears first in the final merged manifest). To allow both services to receive push messages the following approaches can be used.
+
+**Option 1:** Modify the Service which extends FirebaseMessagingService to extend com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver instead:
+
+
+```
+/** 
+ * Messages destined for the LWAYVE SDK will be handled in super.onMessageReceived()
+ */
+public class MyFirebaseService extends com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
+
+		// Host app's push message handling code
+    }
+}
+
+```
+
+**Option 2:** Capture and route Firebase messages to the correct service using a third Service extending FirebaseMessagingService:
+
+**Note:** Third party libraries that using Firebase will need to have include support for this method (such as the Pushwoosh SDK used in the example below).
+
+
+```
+public class FirebaseMessageRoutingService extends FirebaseMessagingService {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+		if (PushwooshFcmHelper.isPushwooshMessage(remoteMessage)) {
+			//this is a Pushwoosh push, SDK will handle it automatically
+            PushwooshFcmHelper.onMessageReceived(remoteMessage);
+        } else {
+        	// Otherwise send the message to LWAYVE for processing
+            FirebaseRoutedMessageService.handleRemoteMessage(remoteMessage);
+		}
+    }
+}
+
+```
+Be sure to declare the service in the app's manifest:
+```
+<service android:name=".FirebaseMessageRoutingService">
+	<intent-filter>
+		<action android:name="com.google.firebase.MESSAGING_EVENT"/>
+	</intent-filter>
+</service>
+
+```
+
 ## Section 3: Customization and Configuration
 
 ### SDK Initialization Options
@@ -346,6 +408,19 @@ There are several configuration parameters that can be set when initializing the
 - setRecorderAdapterFactory(RecorderAdapter.Factory factory) - Sets the RecorderAdapter instance to use when initializing the LWAYVE SDK.
 
 See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html) section of the Javadoc for more details.
+
+#### Updating configuration parameters after the SDK has been initialized
+
+After LWAYVE has been initialized, updates to the configuration can be applied through the [LwayveSdk.updateConfiguration()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#updateConfiguration(LwayveSdkConfiguration)) API method. To preserve any previous settings applied during initialization the [from()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html#from(LwayveSdkConfiguration)) method should be used when constructing your new configuration object with LwayveSdkConfiguration.Builder.
+
+
+```
+lwayveSdk.updateConfiguration(new LwayveSdkConfiguration.Builder()
+        .from(lwayveSdk.getConfiguration())
+        .setLanguage(ExperienceLanguage.FRENCH)
+        .build());
+```
+
 
 ### Recorder Module Initialization Options
 
