@@ -12,196 +12,169 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/activity_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
+            android:orientation="vertical"
+            android:paddingTop="4dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             tools:context="com.lixar.lwayve.customcontrolsample.MainActivity">
 
-            <EditText
-                android:id="@+id/locations_input"
+            <RelativeLayout
+                android:id="@+id/layout_lwayve_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:inputType="text"
-                android:hint="@string/locations"/>
+                android:background="@drawable/layout_bg"
+                android:layout_margin="4dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp">
 
-            <EditText
-                android:id="@+id/user_likes_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/locations_input"
-                android:inputType="text"
-                android:hint="@string/user_likes"/>
-
-            <LinearLayout
-                android:id="@+id/buttons_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/user_likes_input"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/play_btn"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/new_content_txt"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/play"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="?colorAccent" />
+
+                <TextView
+                    android:id="@+id/track_index"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/new_content_txt"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingBottom="16dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="end"/>
+
+                <TextView
+                    android:id="@+id/ticker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/track_index"
+                    android:layout_toStartOf="@id/track_index"
+                    android:layout_below="@id/new_content_txt"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingBottom="8dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="start"/>
+
+                <ProgressBar
+                    android:id="@+id/seek_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ticker"
+                    android:layout_marginBottom="8dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:max="0"
+                    android:progress="0"/>
+
+                <ImageView
+                    android:id="@+id/prev_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/seek_bar"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_prev_selector"
+                    android:onClick="@{() -> activity.onPrevClicked()}"/>
+
+                <ImageView
+                    android:id="@+id/play_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/seek_bar"
+                    android:layout_toRightOf="@id/prev_btn"
+                    android:layout_toEndOf="@id/prev_btn"
+                    android:layout_marginBottom="6dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_play_selector"
                     android:onClick="@{() -> activity.onPlayClicked()}"/>
 
-                <Button
-                    android:id="@+id/pause_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/pause"
-                    android:onClick="@{() -> activity.onPauseClicked()}" />
-
-                <Button
-                    android:id="@+id/clear_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/clear"
-                    android:onClick="@{() -> activity.onClearClicked()}" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/buttons_holder2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/buttons_holder"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/prev_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/rewind"
-                    android:onClick="@{() -> activity.onPrevClicked()}" />
-
-                <Button
+                <ImageView
                     android:id="@+id/next_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/next"
-                    android:onClick="@{() -> activity.onNextClicked()}" />
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/seek_bar"
+                    android:layout_toRightOf="@id/play_btn"
+                    android:layout_toEndOf="@id/play_btn"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_next_selector"
+                    android:onClick="@{() -> activity.onNextClicked()}"/>
 
-                <Button
-                    android:id="@+id/refresh_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/refresh"
-                    android:onClick="@{() -> activity.onRefreshClicked()}" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txt_clip_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/buttons_holder2"
-                android:text="@string/clip_actions"/>
-
-            <LinearLayout
-                android:id="@+id/buttons_holder3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txt_clip_actions"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/url_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/link_action"
-                    android:onClick="@{() -> activity.onUrlClicked()}"/>
-
-                <Button
-                    android:id="@+id/map_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/map_action"
-                    android:onClick="@{() -> activity.onMapClicked()}" />
-
-                <Button
-                    android:id="@+id/ticket_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/ticket_action"
-                    android:onClick="@{() -> activity.onTicketsClicked()}" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/buttons_holder4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/buttons_holder3"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/share_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/share_action"
-                    android:onClick="@{() -> activity.onShareClicked()}"/>
-
-                <Button
-                    android:id="@+id/hotel_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/hotel_action"
-                    android:onClick="@{() -> activity.onHotelClicked()}" />
-
-                <Button
+                <ImageView
                     android:id="@+id/record_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/record_action"
-                    android:onClick="@{() -> activity.onRecordClicked()}" />
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_below="@id/seek_bar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_mic_white_36dp"
+                    android:onClick="@{() -> activity.startRecordActivity()}"/>
 
-            </LinearLayout>
+                <Button
+                    android:id="@+id/actions"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/record_btn"
+                    android:layout_toStartOf="@id/record_btn"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:includeFontPadding="false"
+                    android:drawableRight="@drawable/abc_spinner_mtrl_am_alpha"
+                    android:drawableEnd="@drawable/abc_spinner_mtrl_am_alpha"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:text="@string/actions"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:onClick="@{() -> activity.showActionsMenu()}"/>
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/refresh_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rebuild_playlist"
+                android:onClick="@{() -> activity.onRefreshClicked()}" />
 
             <TextView
                 android:id="@+id/debug_info_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/buttons_holder4"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"/>
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:textSize="12sp"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 

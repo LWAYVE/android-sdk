@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The following string resources are defined by the SDK. To override a string uncomment it
+    below and replace it's value with the desired alternative text. -->
+
+    <!-- General -->
+    <!--<string name="lwayve_general_alert_button_cancel">Cancel</string>-->
+    <!--<string name="lwayve_general_alert_button_ok">OK</string>-->
+    <!--<string name="lwayve_general_brand_name">LWAYVE</string>-->
+    <!--<string name="lwayve_general_share_with">Share with&#8230;</string>-->
+
+    <!--<string name="lwayve_media_notification_pause">Pause</string>-->
+    <!--<string name="lwayve_media_notification_play">Play</string>-->
+    <!--<string name="lwayve_media_notification_previous">Previous</string>-->
+    <!--<string name="lwayve_media_notification_next">Next</string>-->
+
+    <!-- Situational -->
+    <!--<string name="lwayve_situational_audio_default_ticker_text">Event Update - Press Play</string>-->
+    <!--<string name="lwayve_situational_audio_default_ticker_text_branded">%1$s Update - Press Play</string>-->
+    <!--<string name="lwayve_situational_audio_default_notification_title">Update</string>-->
+    <!--<string name="lwayve_situational_audio_default_notification_text">Event Update!</string>-->
+    <!--<string name="lwayve_situational_audio_default_notification_text_branded">%1$s Update!</string>-->
+
+    <!-- Record feature -->
+    <!--<string name="lwayve_audio_recording_uploading_message">Upload in progress&#8230;</string>-->
+
+    <!-- OuterBand icons -->
+    <!--<string name="lwayve_clip_action_map">Map</string>-->
+    <!--<string name="lwayve_clip_action_link">Link</string>-->
+    <!--<string name="lwayve_clip_action_tickets">Tickets</string>-->
+    <!--<string name="lwayve_clip_action_share">Share</string>-->
+    <!--<string name="lwayve_clip_action_hotel">Hotel</string>-->
+    <!--<string name="lwayve_clip_action_record">Record</string>-->
+
+    <!-- Audio Recording -->
+    <!--<string name="lwayve_audio_recording_try_again_button_title">Try Again</string>-->
+    <!--<string name="lwayve_audio_recording_send_button_title">Send</string>-->
+    <!--<string name="lwayve_audio_recording_recording_title">Recording&#8230;</string>-->
+    <!--<string name="lwayve_audio_recording_sending_success_toast_message">Recording sent!</string>-->
+    <!--<string name="lwayve_audio_recording_microphone_disabled_alert_title">Microphone permission denied</string>-->
+    <!--<string name="lwayve_audio_recording_app_settings_alert_text">In order to record audio this app requires access to your device\'s microphone. You can give permission for this app to use the microphone from the app settings screen.</string>-->
+    <!--<string name="lwayve_audio_recording_alert_button.app_settings">App Settings</string>-->
+    <!--<string name="lwayve_audio_recording_upload_failure_alert_title">Error</string>-->
+    <!--<string name="lwayve_audio_recording_upload_failure_alert_text">Network error sending recording.</string>-->
+    <!--<string name="lwayve_audio_recording_send_confirmation_alert_title">Send Recording</string>-->
+    <!--<string name="lwayve_audio_recording_send_confirmation_alert_text">Send this recording to %1$s?</string>-->
+    <!--<string name="lwayve_audio_recording_uploading_message">Upload in progress</string>-->
+    <!--<string name="lwayve_audio_recording_onboarding_text">Submit your own\nrecording to\n%1$s!</string>-->
+</resources>

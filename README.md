@@ -15,7 +15,8 @@ The following document provides background information on the LWAYVE platform as
     * [SDK Initialization Options](#sdk-initialization-options)
     * [Recorder Module Initialization Options](#recorder-module-initialization-options)
     * [Supplementary Actions](#supplementary-actions)
-    * [Colours](#colours)    
+    * [Colours](#colours) 
+    * [Overriding String Resources](#overriding-string-resources)   
   - [Section 4: Reference Documentation](#section-4-reference-documentation)
     * [API](#api)
     * [Classes](#classes)
@@ -113,16 +114,16 @@ To include the LWAYVE SDK in your project, add the following line of code to the
  
 - {sdkVersion} - The latest version of LWAYVE, which can be found at [http://search.maven.org/#search|ga|1|lwayve-sdk](http://search.maven.org/#search|ga|1|lwayve-sdk)
  
-**Code**
  
 ```
-compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
+dependencies {
+    compile 'com.lixar.lwayve:lwayve-sdk:{sdkVersion}'
+}
 ```
  
 #### ProxSee SDK Module (optional)
 To include the optional ProxSee SDK add-on module as a dependency in your project, add the lwayve-proxsee module to the **dependencies** section of the app's **build.gradle**.
 
-**Code**
  
 ```
 dependencies {
@@ -133,7 +134,6 @@ dependencies {
 #### Recorder Module (optional)
 To include the optional audio recorder add-on module as a dependency in your project, add the lwayve-recorder module to the **dependencies** section of your **build.gradle**. 
 
-**Code**
  
 ```
 dependencies {
@@ -143,7 +143,6 @@ dependencies {
 
 The recorder module has dependencies on some modules which are not available through Maven Central. The Jitpack.io repository will need to be added to your app's **build.gradle** if it is not already present.
 
-**Code**
  
 ```
 repositories {
@@ -158,7 +157,6 @@ Add the following code to your Application class' initialization process (e.g., 
  
 - {authToken} - The LWAYVE authentication token provided by Lixar. 
  
-**Code**
  
 ```
 LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
@@ -175,7 +173,6 @@ try {
 #### Connecting to the LWAYVE SDK
 Once the SDK has been initialized you can call the connect() method to obtain the SDK instance.
 
-**Code**
 
 ```
 LwayveSdk.connect(new LwayveConnectionCallback() {
@@ -188,7 +185,6 @@ LwayveSdk.connect(new LwayveConnectionCallback() {
 #### Initializing the ProxSee SDK Add-on Module
 To enable the ProxSee SDK integration support in LWAYVE, ensure the optional ProxSee add-on dependency has been added to the application's build.gradle. Next create and pass an instance of ProxSeeSdkAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
   
-**Code**
  
 ```
 LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
@@ -206,7 +202,6 @@ try {
 #### Initializing the Audio Recorder Add-on Module
 To enable the audio recording integration support in LWAYVE, ensure the optional recorder add-on dependency has been added to the application's build.gradle. Next create and pass an instance of RecorderAdapterFactory to LwayveSdkConfiguration.Builder when initializing the SDK:
   
-**Code**
  
 ```
 LwayveSdkConfiguration configuration = new LwayveSdkConfiguration.Builder()
@@ -321,13 +316,75 @@ Connecting to the media browser through the lwayveSdk instance:
 
 ```
 public void onResume() {
-	lwayveSdk.connectToMediaBrowser(activity, new MediaBrowserConnectionCallback() {
+    lwayveSdk.connectToMediaBrowser(activity, new MediaBrowserConnectionCallback() {
         public void onConnected() {
             // Once connected, playback commands such as lwayveSdk.play() or lwayveSdk.skipNext() 
             // can be sent to the SDK.
         }
-	});
+    });
 }
+```
+
+#### Handling Multiple Firebase Instances
+If the host app or another library within the app is also using Firebase for push messages and loads it's configuration through the google-services.json file you will need to add the following lines to your manifest to prevent the FirebaseInitProvider from being removed from the final merged AndroidManifest.xml at build time.
+
+```
+<provider
+	android:name="com.google.firebase.provider.FirebaseInitProvider"
+	android:authorities="${applicationId}.firebaseinitprovider"
+	android:exported="false"
+	tools:node="replace" />
+
+```
+
+If the host application or another library within the application receives push messages through a Service which extends FirebaseMessagingService Android will only deliver push messages to one of the Services (whichever Service appears first in the final merged manifest). To allow both services to receive push messages the following approaches can be used.
+
+**Option 1:** Modify the Service which extends FirebaseMessagingService to extend com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver instead:
+
+
+```
+/** 
+ * Messages destined for the LWAYVE SDK will be handled in super.onMessageReceived()
+ */
+public class MyFirebaseService extends com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
+
+		// Host app's push message handling code
+    }
+}
+
+```
+
+**Option 2:** Capture and route Firebase messages to the correct service using a third Service extending FirebaseMessagingService:
+
+**Note:** Third party libraries that using Firebase will need to have include support for this method (such as the Pushwoosh SDK used in the example below).
+
+
+```
+public class FirebaseMessageRoutingService extends FirebaseMessagingService {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+		if (PushwooshFcmHelper.isPushwooshMessage(remoteMessage)) {
+			//this is a Pushwoosh push, SDK will handle it automatically
+            PushwooshFcmHelper.onMessageReceived(remoteMessage);
+        } else {
+        	// Otherwise send the message to LWAYVE for processing
+            FirebaseRoutedMessageService.handleRemoteMessage(remoteMessage);
+		}
+    }
+}
+
+```
+Be sure to declare the service in the app's manifest:
+```
+<service android:name=".FirebaseMessageRoutingService">
+	<intent-filter>
+		<action android:name="com.google.firebase.MESSAGING_EVENT"/>
+	</intent-filter>
+</service>
+
 ```
 
 #### Handling Multiple Firebase Instances
@@ -396,12 +453,12 @@ Be sure to declare the service in the app's manifest:
 
 ### SDK Initialization Options
 
-There are several configuration parameters that can be set when initializing the LWAYVE SDK. These options are passed to the SDK during initialization through the LwayveSdkConfiguration object. An LwayveSdkConfiguration instance can be constructed with the LwayveSdkConfiguration.Builder class. The Builder supports the following methods:
+There are several configuration parameters that can be set when initializing the LWAYVE SDK. These options are passed to the SDK during initialization through the LwayveSdkConfiguration object. A [Builder](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html) class is provided with the following methods:
 
-- setAuthenticationToken(String authToken) (required) - Sets the JWT auth token to use to authenticate with the LWAYVE backend.
+- setAuthenticationToken(String authToken) (required) - Sets the auth token to use to authenticate with the LWAYVE backend.
 - setBaseUrl(String baseUrl) (optional) - Configures the url used to communicate with the LWAYVE backend.
 - setEventName(String name) (optional) - When set this will replace "LWAYVE" with the name of your choice for certain string resources used in the SDK. 
-- setLanguage(ExperienceLanguage language) (optional) - Sets the preferred language to use for audio clips.
+- setLanguage(ExperienceLanguage language) (optional) - Sets the preferred language to use for the SDK. If not set the SDK will attempt to use the device language (if supported) otherwise the language will default to English.
 - setNotificationLargeIconRes(int res) (optional) - Sets the drawable resource to use for the icon in the media player notification.
 - setNotificationSmallIconRes(int res) (optional) - Sets the drawable resource to use as the status bar icon for the media player notification.
 - setProxSeeSdkAdapterFactory(ProxSeeSdkAdapter.Factory factory) - Sets the ProxSeeSdkAdapter instance to use when initializing the LWAYVE SDK.
@@ -443,7 +500,7 @@ A sixth action will appear in the Outer Band when recording functionality is ena
 
 #### Executing actions independent of the LWAYVE Playback Control
 
-Supplementary actions for the current audio clip can be executed independent of the LWAYVE Playback Control by calling [LwayveSdk.getOuterBandActions()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#getOuterBandActions()) and [LwayveSdk.executeOuterBandAction(OuterBandAction)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#executeOuterBandAction(OuterBandAction)) methods. (Check out the [CustomControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample/MainActivity.java) project for a complete example of implementing custom playback controls for LWAYVE.)
+Supplementary actions for the current audio clip can be executed independent of the LWAYVE Playback Control by calling [LwayveSdk.getClipActions()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#getClipActions()) and [LwayveSdk.executeClipAction(ClipAction)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#executeClipAction(ClipAction)) methods. (Check out the [CustomControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample/MainActivity.java) project for a complete example of implementing custom playback controls for LWAYVE.)
 
 ### Colours
 
@@ -461,7 +518,10 @@ The LWAYVE Playback Control supports overriding the colours used for the play bu
 The colours for the audio recording window can be configured through the [LwayvePlaybackControlView](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/view/LwayvePlaybackControlView.html) if using the LWAYVE Playback Control.
 
 The audio recording window can be launched independent of the LWAYVE Playback Control (provided the recording module is properly initialized.) This can be done by calling [LwayveSdk.startRecordActivity(Context, Bundle)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)). Colours can also be customized through the Bundle object passed to this method. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)) for further information.
- 
+
+### Overriding String Resources
+The Android SDK uses standard Android string resources to define the strings displayed by the LWAYVE Playback Control and Recording UI (excluding situational audio messages and audio clip titles.) These strings can be overridden by defining your own values in the app's strings.xml based on Android's rules for [resource merging](https://developer.android.com/studio/write/add-resources.html#resource_merging). The full list of string resource names which can be overriden can be found in the sdk_strings.xml of the [PrebuiltControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/PrebuiltControlSample/src/main/res/values/sdk_strings.xml) app.
+
 ## Section 4: Reference Documentation
  
 ### API

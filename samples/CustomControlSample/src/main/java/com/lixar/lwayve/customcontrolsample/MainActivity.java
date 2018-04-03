@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,25 +24,23 @@ import com.lixar.lwayve.sdk.core.LwayveConnectionCallback;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.events.EventHelper;
 import com.lixar.lwayve.sdk.events.PlaybackEvent;
-import com.lixar.lwayve.sdk.experience.OuterBandAction;
+import com.lixar.lwayve.sdk.experience.ClipAction;
+
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.lixar.lwayve.sdk.experience.OuterBandAction.HOTEL;
-import static com.lixar.lwayve.sdk.experience.OuterBandAction.MAP;
-import static com.lixar.lwayve.sdk.experience.OuterBandAction.SHARE;
-import static com.lixar.lwayve.sdk.experience.OuterBandAction.TICKET;
-import static com.lixar.lwayve.sdk.experience.OuterBandAction.URL;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_CODE = 100;
+    private static final int PROGRESS_UPDATE_DELAY_MS = 33; // ~30fps
 
     private LwayveSdk lwayveSdk;
 
@@ -52,13 +51,31 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean connectingToMediaBrowser;
 
+    private ActionPopup actionPopup;
+
+    private Handler handler;
+    private TimerRunnable timerRunnable;
+    private long timerPrevTimestamp;
+    private int currentProgress = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        viewBinding.setActivity(this);
+        handler = new Handler();
+        initView();
         checkPermissions();
         initializeLwayveSdk();
+    }
+
+    private void initView() {
+        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        viewBinding.setActivity(this);
+        actionPopup = new ActionPopup(this, viewBinding.actions, new ActionPopup.ActionClickListener() {
+            @Override
+            public void onActionClicked(ClipAction action) {
+                lwayveSdk.executeClipAction(action);
+            }
+        });
     }
 
     private void initializeLwayveSdk() {
@@ -80,15 +97,6 @@ public class MainActivity extends AppCompatActivity {
         if (connectingToMediaBrowser) {
             connectToMediaBrowser();
         }
-    }
-
-    private String getUnplayedItemsCount() {
-        return "Number of unplayed items: " + lwayveSdk.getUnplayedItemsCount();
-    }
-
-    private String getClipDuration() {
-        long duration = lwayveSdk.getCurrentQueueItemDuration();
-        return "Current audio clip duration: " + duration + " ms";
     }
 
     @Override
@@ -137,16 +145,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onPlayClicked() {
-        lwayveSdk.play();
-    }
-
-    public void onPauseClicked() {
-        lwayveSdk.pause();
-    }
-
-    public void onClearClicked() {
-        lwayveSdk.clearPlayedItems();
-        lwayveSdk.refreshPlayingQueue();
+        if (lwayveSdk.isPlaying()) {
+            lwayveSdk.pause();
+        } else {
+            lwayveSdk.play();
+        }
     }
 
     public void onPrevClicked() {
@@ -158,32 +161,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onRefreshClicked() {
-        updateLocations();
-        updateUserLikes();
         lwayveSdk.refreshPlayingQueue();
     }
 
-    public void onUrlClicked() {
-        lwayveSdk.executeOuterBandAction(URL);
+    public void showActionsMenu() {
+        actionPopup.show(lwayveSdk.getClipActions());
     }
 
-    public void onMapClicked() {
-        lwayveSdk.executeOuterBandAction(MAP);
-    }
-
-    public void onTicketsClicked() {
-        lwayveSdk.executeOuterBandAction(TICKET);
-    }
-
-    public void onShareClicked() {
-        lwayveSdk.executeOuterBandAction(SHARE);
-    }
-
-    public void onHotelClicked() {
-        lwayveSdk.executeOuterBandAction(HOTEL);
-    }
-
-    public void onRecordClicked() {
+    public void startRecordActivity() {
         lwayveSdk.startRecordActivity(this);
     }
 
@@ -196,10 +181,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_settings) {
-            SettingsActivity.startActivity(this);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                SettingsActivity.startActivity(this);
+                return true;
+            case R.id.menu_tags:
+                new TagDialogFragment().show(getFragmentManager(), TagDialogFragment.class.getSimpleName());
+                return true;
         }
         return false;
     }
@@ -218,42 +206,164 @@ public class MainActivity extends AppCompatActivity {
         return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED;
     }
 
-    private void updateLocations() {
-        String input = viewBinding.locationsInput.getText().toString();
-        if (!TextUtils.isEmpty(input)) {
-            lwayveSdk.setUserLocations(extractTags(input));
+    private void handlePlaybackEvent(PlaybackEvent event) {
+        switch (event) {
+            case PREPARED_EVENT:
+                viewBinding.playBtn.setEnabled(true);
+                viewBinding.prevBtn.setEnabled(!lwayveSdk.isStartOfQueue());
+                viewBinding.nextBtn.setEnabled(!lwayveSdk.isEndOfQueue());
+                break;
+            case NOT_PREPARED_EVENT:
+                viewBinding.playBtn.setEnabled(false);
+                viewBinding.prevBtn.setEnabled(false);
+                viewBinding.nextBtn.setEnabled(false);
+                break;
+            case END_OF_PLAYLIST_EVENT:
+                viewBinding.prevBtn.setEnabled(true);
+                viewBinding.playBtn.setEnabled(false);
+                viewBinding.nextBtn.setEnabled(false);
+            case SKIP_NEXT_EVENT:
+            case SKIP_PREV_EVENT:
+            case STOP_EVENT:
+            case COMPLETION_EVENT:
+                resetSeekBar();
+                break;
+            case PAUSE_EVENT:
+                cancelTimer();
+                break;
+            case PLAY_EVENT:
+                viewBinding.prevBtn.setEnabled(true);
+                initTimer();
+                break;
+            case REWIND_EVENT:
+                resetSeekBar();
+                if (lwayveSdk.isPlaying()) {
+                    initTimer();
+                }
+                break;
+        }
+
+        updateDebugInfo();
+        updateNewContentBanner();
+        updateTicker();
+        updatePlayBtnState();
+        updateActionsMenuEnabled();
+        updateCurrentTrackIndex();
+    }
+
+    private void updateDebugInfo() {
+        StringBuilder debugInfo = new StringBuilder()
+                .append(lwayveSdk.generateDebugInfo())
+                .append(lwayveSdk.generatePlaylistDebugInfo())
+                .append(lwayveSdk.generateQueueDebugInfo());
+        viewBinding.debugInfoTxt.setText(debugInfo);
+    }
+
+    private void updateNewContentBanner() {
+        boolean newContent = lwayveSdk.isNewContentAvailable() && currentProgress == 0;
+        boolean situationalUpdate = lwayveSdk.isSituationalUpdatePending();
+
+        if (situationalUpdate) {
+            viewBinding.newContentTxt.setText(R.string.new_situational);
+        } else if (newContent) {
+            viewBinding.newContentTxt.setText(R.string.new_content);
         } else {
-            lwayveSdk.setUserLocations(new HashSet<String>());
+            viewBinding.newContentTxt.setText("");
         }
     }
 
-    private void updateUserLikes() {
-        String input = viewBinding.userLikesInput.getText().toString();
-        if (!TextUtils.isEmpty(input)) {
-            lwayveSdk.setUserLikes(extractTags(input));
-        } else {
-            lwayveSdk.setUserLikes(new HashSet<String>());
+    private void updateTicker() {
+        String tickerText = lwayveSdk.getTickerText();
+        if (!lwayveSdk.isSituationalUpdatePending() && lwayveSdk.getCurrentQueueItemDuration() > -1) {
+            tickerText += " (" + getClipLength() + ")";
         }
+        viewBinding.ticker.setText(tickerText);
     }
 
     @NonNull
-    private HashSet<String> extractTags(String input) {
-        return new HashSet<>(new ArrayList<>(Arrays.asList(input.trim().split("\\s*,\\s*"))));
+    private String getClipLength() {
+        long clipLength = lwayveSdk.getCurrentQueueItemDuration();
+        return LocalTime.MIN.plus(clipLength, ChronoUnit.MILLIS).format(DateTimeFormatter.ofPattern("mm:ss"));
+    }
+
+    private void updatePlayBtnState() {
+        int res = lwayveSdk.isPlaying() ? R.drawable.ic_stop_selector : R.drawable.ic_play_selector;
+        viewBinding.playBtn.setImageResource(res);
+    }
+
+    private void updateActionsMenuEnabled() {
+        viewBinding.actions.setEnabled(!lwayveSdk.getClipActions().isEmpty());
+    }
+
+    private void updateCurrentTrackIndex() {
+        String text = "0/0";
+        List<MediaSessionCompat.QueueItem> queue = lwayveSdk.getPlayingQueue();
+        if (queue != null && !queue.isEmpty()) {
+            int idx = lwayveSdk.getCurrentQueueItemIndex() + 1;
+            int size = queue.size();
+            if (idx > size) {
+                text = "End";
+            } else if (idx >= 0 && size > 0) {
+                text = idx + "/" + size;
+            }
+        }
+        viewBinding.trackIndex.setText(text);
+    }
+
+    private void initTimer() {
+        cancelTimer();
+        timerPrevTimestamp = System.currentTimeMillis();
+        timerRunnable = new TimerRunnable();
+        updateTimer();
+    }
+
+    private void updateTimer() {
+        handler.postDelayed(timerRunnable, PROGRESS_UPDATE_DELAY_MS);
+    }
+
+    private void cancelTimer() {
+        if (timerRunnable != null) {
+            handler.removeCallbacks(timerRunnable);
+            timerRunnable = null;
+        }
+    }
+
+    private void resetSeekBar() {
+        currentProgress = 0;
+        viewBinding.seekBar.setProgress(0);
+        viewBinding.seekBar.setMax(0);
+    }
+
+    public void updateProgress(int position, int max) {
+        viewBinding.seekBar.setProgress(position);
+        viewBinding.seekBar.setMax(max);
+    }
+
+    private class TimerRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            currentProgress += System.currentTimeMillis() - timerPrevTimestamp;
+            timerPrevTimestamp = System.currentTimeMillis();
+
+            int progressMaxVal = (int) lwayveSdk.getCurrentQueueItemDuration();
+
+            updateProgress(currentProgress, progressMaxVal);
+
+            if (lwayveSdk.isPlaying() && currentProgress < progressMaxVal) {
+                updateTimer();
+            } else {
+                cancelTimer();
+            }
+        }
+
     }
 
     private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
 
         @Override
         public void onConnected() {
-            if (lwayveSdk.getPlayingQueue() != null && !lwayveSdk.getPlayingQueue().isEmpty()) {
-                int index = lwayveSdk.getCurrentQueueItemIndex();
-                boolean isFirst = isFirstItem(index);
-                boolean isLast = isLastItem(index);
-                viewBinding.prevBtn.setEnabled(!isFirst);
-                viewBinding.nextBtn.setEnabled(!isLast);
-                viewBinding.playBtn.setEnabled(!isLast);
-                viewBinding.pauseBtn.setEnabled(!isLast);
-            }
+            handlePlaybackEvent(lwayveSdk.getLastPlaybackEvent());
         }
 
     }
@@ -263,84 +373,8 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             PlaybackEvent event = (PlaybackEvent) intent.getExtras().get(EventHelper.PLAYBACK_AUDIO_EVENT_TYPE_KEY);
             Log.i(TAG, "got: " + event.name() + " event");
-
-            int index = lwayveSdk.getCurrentQueueItemIndex();
-            switch (event) {
-                case PREPARED_EVENT:
-                    viewBinding.playBtn.setEnabled(true);
-                    viewBinding.pauseBtn.setEnabled(true);
-                    viewBinding.prevBtn.setEnabled(!isFirstItem(index));
-                    viewBinding.nextBtn.setEnabled(!isLastItem(index));
-                    updateDebugInfo(true);
-                    break;
-                case NOT_PREPARED_EVENT:
-                    viewBinding.playBtn.setEnabled(false);
-                    viewBinding.pauseBtn.setEnabled(false);
-                    viewBinding.prevBtn.setEnabled(false);
-                    viewBinding.nextBtn.setEnabled(false);
-                    updateDebugInfo(false);
-                    break;
-                case END_OF_PLAYLIST_EVENT:
-                    viewBinding.prevBtn.setEnabled(true);
-                    viewBinding.playBtn.setEnabled(false);
-                    viewBinding.pauseBtn.setEnabled(false);
-                    viewBinding.nextBtn.setEnabled(false);
-                    updateDebugInfo(false);
-                    break;
-            }
-
-            updateActionsForCurrentClip();
+            handlePlaybackEvent(event);
         }
     }
-
-    private boolean isLastItem(int index) {
-        return index >= lwayveSdk.getPlayingQueue().size() - 1;
-    }
-
-    private boolean isFirstItem(int index) {
-        return index == 0;
-    }
-
-    private void updateDebugInfo(boolean prepared) {
-        StringBuilder debugInfo = new StringBuilder();
-        if (prepared) {
-            debugInfo.append(getClipDuration())
-                    .append("\n\n");
-        }
-        debugInfo.append(getUnplayedItemsCount())
-                .append("\n\n")
-                .append(lwayveSdk.generateDebugInfo())
-                .append(lwayveSdk.generatePlaylistDebugInfo())
-                .append(lwayveSdk.generateQueueDebugInfo());
-        viewBinding.debugInfoTxt.setText(debugInfo);
-    }
-
-    private void updateActionsForCurrentClip() {
-        viewBinding.urlBtn.setEnabled(false);
-        viewBinding.mapBtn.setEnabled(false);
-        viewBinding.ticketBtn.setEnabled(false);
-        viewBinding.shareBtn.setEnabled(false);
-        viewBinding.hotelBtn.setEnabled(false);
-
-        for (OuterBandAction action : lwayveSdk.getOuterBandActions()) {
-            switch (action) {
-                case URL:
-                    viewBinding.urlBtn.setEnabled(true);
-                    break;
-                case MAP:
-                    viewBinding.mapBtn.setEnabled(true);
-                    break;
-                case TICKET:
-                    viewBinding.ticketBtn.setEnabled(true);
-                    break;
-                case SHARE:
-                    viewBinding.shareBtn.setEnabled(true);
-                    break;
-                case HOTEL:
-                    viewBinding.hotelBtn.setEnabled(true);
-                    break;
-            }
-        }
-    }
-
+    
 }

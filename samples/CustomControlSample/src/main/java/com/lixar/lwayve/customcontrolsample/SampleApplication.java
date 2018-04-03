@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.lixar.lwayve.proxsee.ProxSeeSdkAdapterFactory;
+import com.lixar.lwayve.sdk.proxsee.ProxSeeSdkAdapterFactory;
 import com.lixar.lwayve.sdk.core.LwayveSdk;
 import com.lixar.lwayve.sdk.core.LwayveSdkConfiguration;
 import com.lixar.lwayve.sdk.exceptions.InvalidSdkConfigurationException;
