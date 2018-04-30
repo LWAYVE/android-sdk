@@ -468,7 +468,7 @@ See the [LwayveSdkConfiguration.Builder](https://lwayve.github.io/android/docs/j
 
 #### Updating configuration parameters after the SDK has been initialized
 
-After LWAYVE has been initialized, updates to the configuration can be applied through the [LwayveSdk.updateConfiguration()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#updateConfiguration(LwayveSdkConfiguration)) API method. To preserve any previous settings applied during initialization the [from()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html#from(LwayveSdkConfiguration)) method should be used when constructing your new configuration object with LwayveSdkConfiguration.Builder.
+After LWAYVE has been initialized, updates to the configuration can be applied through the [LwayveSdk.updateConfiguration(LwayveSdkConfiguration)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#updateConfiguration(com.lixar.lwayve.sdk.core.LwayveSdkConfiguration)) API method. To preserve any previous settings applied during initialization the [from(LwayveSdkConfiguration)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdkConfiguration.Builder.html#from(com.lixar.lwayve.sdk.core.LwayveSdkConfiguration)) method should be used when constructing your new configuration object with LwayveSdkConfiguration.Builder.
 
 
 ```
@@ -500,7 +500,7 @@ A sixth action will appear in the Outer Band when recording functionality is ena
 
 #### Executing actions independent of the LWAYVE Playback Control
 
-Supplementary actions for the current audio clip can be executed independent of the LWAYVE Playback Control by calling [LwayveSdk.getClipActions()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#getClipActions()) and [LwayveSdk.executeClipAction(ClipAction)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#executeClipAction(ClipAction)) methods. (Check out the [CustomControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample/MainActivity.java) project for a complete example of implementing custom playback controls for LWAYVE.)
+Supplementary actions for the current audio clip can be executed independent of the LWAYVE Playback Control by calling [LwayveSdk.getClipActions()](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#getClipActions()) and [LwayveSdk.executeClipAction(ClipAction)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#executeClipAction(com.lixar.lwayve.sdk.experience.ClipAction)) methods. (Check out the [CustomControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/CustomControlSample/src/main/java/com/lixar/lwayve/customcontrolsample/MainActivity.java) project for a complete example of implementing custom playback controls for LWAYVE.)
 
 ### Colours
 
@@ -517,7 +517,7 @@ The LWAYVE Playback Control supports overriding the colours used for the play bu
 #### Audio Recording Window
 The colours for the audio recording window can be configured through the [LwayvePlaybackControlView](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/view/LwayvePlaybackControlView.html) if using the LWAYVE Playback Control.
 
-The audio recording window can be launched independent of the LWAYVE Playback Control (provided the recording module is properly initialized.) This can be done by calling [LwayveSdk.startRecordActivity(Context, Bundle)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)). Colours can also be customized through the Bundle object passed to this method. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Context,%20Bundle)) for further information.
+The audio recording window can be launched independent of the LWAYVE Playback Control (provided the recording module is properly initialized.) This can be done by calling [LwayveSdk.startRecordActivity(Bundle)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Bundle)). Colours can also be customized through the Bundle object passed to this method. See the [API documentation](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#startRecordActivity(Bundle)) for further information.
 
 ### Overriding String Resources
 The Android SDK uses standard Android string resources to define the strings displayed by the LWAYVE Playback Control and Recording UI (excluding situational audio messages and audio clip titles.) These strings can be overridden by defining your own values in the app's strings.xml based on Android's rules for [resource merging](https://developer.android.com/studio/write/add-resources.html#resource_merging). The full list of string resource names which can be overriden can be found in the sdk_strings.xml of the [PrebuiltControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/PrebuiltControlSample/src/main/res/values/sdk_strings.xml) app.
@@ -528,6 +528,6 @@ The Android SDK uses standard Android string resources to define the strings dis
 You can test LWAYVE by using the API documented on Swagger. You can access Swagger through the following URL: [https://gateway.lwayve.com/swagger-ui/index.html](https://gateway.lwayve.com/swagger-ui/index.html)
  
 ### Classes 
-For Javadoc documentation, refer to  [https://lwayve.github.io/android/docs/javadoc/reference/classes.html](#https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
+For Javadoc documentation, refer to [https://lwayve.github.io/android/docs/javadoc/reference/classes.html](https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
 
  

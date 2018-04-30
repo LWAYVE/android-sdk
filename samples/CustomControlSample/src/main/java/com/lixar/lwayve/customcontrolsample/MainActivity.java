@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startRecordActivity() {
-        lwayveSdk.startRecordActivity(this);
+        lwayveSdk.startRecordActivity();
     }
 
     @Override
@@ -376,5 +376,5 @@ public class MainActivity extends AppCompatActivity {
             handlePlaybackEvent(event);
         }
     }
-    
+
 }
