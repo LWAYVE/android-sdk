@@ -39,11 +39,11 @@
     <!--<string name="lwayve_audio_recording_sending_success_toast_message">Recording sent!</string>-->
     <!--<string name="lwayve_audio_recording_microphone_disabled_alert_title">Microphone permission denied</string>-->
     <!--<string name="lwayve_audio_recording_app_settings_alert_text">In order to record audio this app requires access to your device\'s microphone. You can give permission for this app to use the microphone from the app settings screen.</string>-->
-    <!--<string name="lwayve_audio_recording_alert_button.app_settings">App Settings</string>-->
+    <!--<string name="lwayve_audio_recording_alert_button_app_settings">App Settings</string>-->
     <!--<string name="lwayve_audio_recording_upload_failure_alert_title">Error</string>-->
     <!--<string name="lwayve_audio_recording_upload_failure_alert_text">Network error sending recording.</string>-->
     <!--<string name="lwayve_audio_recording_send_confirmation_alert_title">Send Recording</string>-->
     <!--<string name="lwayve_audio_recording_send_confirmation_alert_text">Send this recording to %1$s?</string>-->
-    <!--<string name="lwayve_audio_recording_uploading_message">Upload in progress</string>-->
-    <!--<string name="lwayve_audio_recording_onboarding_text">Submit your own\nrecording to\n%1$s!</string>-->
+    <!--<string name="lwayve_audio_recording_onboarding_default_title">Record a clip!</string>-->
+    <!--<string name="lwayve_audio_recording_onboarding_default_body"></string>-->
 </resources>
