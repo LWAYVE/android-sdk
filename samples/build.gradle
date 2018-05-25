@@ -1,25 +1,71 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.2'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
 allprojects {
     repositories {
+        maven { url "https://jitpack.io" }
+        mavenCentral()
         jcenter()
         google()
     }
 }
 
+ext {
+    if (project.hasProperty('versionCode')) {
+        teamCityVersionCode = project.properties.get('versionCode') as Integer
+    } else {
+        teamCityVersionCode = 0
+    }
+
+    if (project.hasProperty('versionName')) {
+        teamCityVersionName = project.properties.get('versionName')
+    } else {
+        teamCityVersionName = "localbuild"
+    }
+
+    def props = getPropertiesFromFile("$rootProject.projectDir/../lwayve-sdk/project.properties")
+
+    sdkCompileSdkVersion = props.getProperty('sdkCompileSdkVersion') as Integer
+    sdkMinSdkVersion = props.getProperty('sdkMinSdkVersion') as Integer
+    sdkTargetSdkVersion = props.getProperty('sdkTargetSdkVersion') as Integer
+    supportLibVersion = props.getProperty('supportLibVersion')
+
+    lwayveVersionMajor = props.getProperty('lwayveVersionMajor') as Integer
+    lwayveVersionMinor = props.getProperty('lwayveVersionMinor') as Integer
+    lwayveVersionPatch = props.getProperty('lwayveVersionPatch') as Integer
+
+    lwayveVersionCode = lwayveVersionMajor * 10000 + lwayveVersionMinor * 100 + lwayveVersionPatch
+    lwayveVersionName = lwayveVersionMajor + '.' + lwayveVersionMinor + '.' + lwayveVersionPatch
+
+    if (!teamCityVersionName.contains("master.")) {
+        lwayveVersionName += '-SNAPSHOT'
+    }
+
+    lwayveFullVersionName = lwayveVersionName + '-build' + teamCityVersionCode + '_' + teamCityVersionName
+
+    proxseeSdkVersion = props.getProperty('proxseeSdkVersion')
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+def static getPropertiesFromFile(path) {
+    def props = new Properties()
+    new File(path).withInputStream {
+        stream -> props.load(stream)
+    }
+    return props
 }

@@ -16,7 +16,8 @@ The following document provides background information on the LWAYVE platform as
     * [Recorder Module Initialization Options](#recorder-module-initialization-options)
     * [Supplementary Actions](#supplementary-actions)
     * [Colours](#colours) 
-    * [Overriding String Resources](#overriding-string-resources)   
+    * [Overriding String Resources](#overriding-string-resources) 
+    * [Setting ProxSee SDK Metadata](#setting-proxsee-sdk-metadata)
   - [Section 4: Reference Documentation](#section-4-reference-documentation)
     * [API](#api)
     * [Classes](#classes)
@@ -387,68 +388,6 @@ Be sure to declare the service in the app's manifest:
 
 ```
 
-#### Handling Multiple Firebase Instances
-If the host app or another library within the app is also using Firebase for push messages and loads it's configuration through the google-services.json file you will need to add the following lines to your manifest to prevent the FirebaseInitProvider from being removed from the final merged AndroidManifest.xml at build time.
-
-```
-<provider
-	android:name="com.google.firebase.provider.FirebaseInitProvider"
-	android:authorities="${applicationId}.firebaseinitprovider"
-	android:exported="false"
-	tools:node="replace" />
-
-```
-
-If the host application or another library within the application receives push messages through a Service which extends FirebaseMessagingService Android will only deliver push messages to one of the Services (whichever Service appears first in the final merged manifest). To allow both services to receive push messages the following approaches can be used.
-
-**Option 1:** Modify the Service which extends FirebaseMessagingService to extend com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver instead:
-
-
-```
-/** 
- * Messages destined for the LWAYVE SDK will be handled in super.onMessageReceived()
- */
-public class MyFirebaseService extends com.lixar.lwayve.sdk.experience.FirebaseMessageReceiver {
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-
-		// Host app's push message handling code
-    }
-}
-
-```
-
-**Option 2:** Capture and route Firebase messages to the correct service using a third Service extending FirebaseMessagingService:
-
-**Note:** Third party libraries that using Firebase will need to have include support for this method (such as the Pushwoosh SDK used in the example below).
-
-
-```
-public class FirebaseMessageRoutingService extends FirebaseMessagingService {
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-		if (PushwooshFcmHelper.isPushwooshMessage(remoteMessage)) {
-			//this is a Pushwoosh push, SDK will handle it automatically
-            PushwooshFcmHelper.onMessageReceived(remoteMessage);
-        } else {
-        	// Otherwise send the message to LWAYVE for processing
-            FirebaseRoutedMessageService.handleRemoteMessage(remoteMessage);
-		}
-    }
-}
-
-```
-Be sure to declare the service in the app's manifest:
-```
-<service android:name=".FirebaseMessageRoutingService">
-	<intent-filter>
-		<action android:name="com.google.firebase.MESSAGING_EVENT"/>
-	</intent-filter>
-</service>
-
-```
-
 ## Section 3: Customization and Configuration
 
 ### SDK Initialization Options
@@ -522,12 +461,15 @@ The audio recording window can be launched independent of the LWAYVE Playback Co
 ### Overriding String Resources
 The Android SDK uses standard Android string resources to define the strings displayed by the LWAYVE Playback Control and Recording UI (excluding situational audio messages and audio clip titles.) These strings can be overridden by defining your own values in the app's strings.xml based on Android's rules for [resource merging](https://developer.android.com/studio/write/add-resources.html#resource_merging). The full list of string resource names which can be overriden can be found in the sdk_strings.xml of the [PrebuiltControlSample](https://github.com/LWAYVE/android-sdk/blob/master/samples/PrebuiltControlSample/src/main/res/values/sdk_strings.xml) app.
 
+### Setting ProxSee SDK Metadata
+If the ProxSee SDK add-on module is enabled, extra metadata can passed to the SDK through the [LwayveSdk.setProxSeeMetadata(String, Object, UpdateMetadataCallBack)](https://lwayve.github.io/android/docs/javadoc/reference/com/lixar/lwayve/sdk/core/LwayveSdk.html#setProxSeeMetadata(java.lang.String,%20java.lang.Object,%20com.lixar.lwayve.proxsee.ProxSeeSdkAdapter.UpdateMetadataCallBack)) API method.
+
 ## Section 4: Reference Documentation
  
 ### API
 You can test LWAYVE by using the API documented on Swagger. You can access Swagger through the following URL: [https://gateway.lwayve.com/swagger-ui/index.html](https://gateway.lwayve.com/swagger-ui/index.html)
  
 ### Classes 
-For Javadoc documentation, refer to [https://lwayve.github.io/android/docs/javadoc/reference/classes.html](https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
+For Javadoc documentation, refer to  [https://lwayve.github.io/android/docs/javadoc/reference/classes.html](https://lwayve.github.io/android/docs/javadoc/reference/classes.html).
 
  

@@ -1,1 +1,13 @@
-include ':PrebuiltControlSample', ':CustomControlSample'
+include ':PrebuiltControlSample', ':CustomControlSample', ':sdk', ':proxsee', ':recorder'
+
+project(':PrebuiltControlSample').buildFileName = "build.project.gradle"
+project(':CustomControlSample').buildFileName = "build.project.gradle"
+
+project(':sdk').projectDir = new File(rootProject.projectDir, '../lwayve-sdk/sdk')
+project(':sdk').buildFileName = "build.gradle"
+
+project(':proxsee').projectDir = new File(rootProject.projectDir, '../lwayve-sdk/proxsee')
+project(':proxsee').buildFileName = "build.gradle"
+
+project(':recorder').projectDir = new File(rootProject.projectDir, '../lwayve-sdk/recorder')
+project(':recorder').buildFileName = "build.gradle"
